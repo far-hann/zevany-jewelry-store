@@ -1,13 +1,36 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { createClient } from '@supabase/supabase-js';
 
-// Supabase configuration
-const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL!;
-const supabaseKey = process.env.SUPABASE_SERVICE_ROLE_KEY!;
-const supabase = createClient(supabaseUrl, supabaseKey);
+// Supabase configuration - make optional for deployment
+const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL;
+const supabaseKey = process.env.SUPABASE_SERVICE_ROLE_KEY;
+
+// Clean the URL by removing any extra text or whitespace
+const cleanUrl = supabaseUrl?.trim().replace(/\s+url.*$/i, '').replace(/url.*$/i, '');
+
+const supabase = supabaseUrl && supabaseKey && cleanUrl ? createClient(cleanUrl, supabaseKey) : null;
 
 export async function GET() {
   try {
+    // Check if Supabase is configured
+    if (!supabase) {
+      return NextResponse.json({
+        success: true,
+        data: {
+          orders: [],
+          statistics: {
+            totalOrders: 0,
+            totalRevenue: 0,
+            pendingOrders: 0,
+            confirmedOrders: 0,
+            shippedOrders: 0,
+            deliveredOrders: 0
+          }
+        },
+        message: "Database not configured. Please set up Supabase environment variables."
+      }, { status: 200 });
+    }
+
     // Fetch orders with their items using Supabase
     const { data: orders, error: ordersError } = await supabase
       .from('orders')
@@ -84,6 +107,14 @@ export async function GET() {
 
 export async function PUT(request: NextRequest) {
   try {
+    // Check if Supabase is configured
+    if (!supabase) {
+      return NextResponse.json({
+        success: false,
+        error: 'Database not configured. Please set up Supabase environment variables.'
+      }, { status: 503 });
+    }
+
     const { orderId, status, fulfillmentStatus } = await request.json();
 
     if (!orderId) {
@@ -91,7 +122,9 @@ export async function PUT(request: NextRequest) {
         { success: false, error: 'Order ID is required' },
         { status: 400 }
       );
-    }    // Prepare update data
+    }
+
+    // Prepare update data
     const updateData: Record<string, unknown> = {
       updated_at: new Date().toISOString()
     };
