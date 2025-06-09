@@ -65,10 +65,11 @@ export function ProductCard({
       addToWishlist(id)
     }
     setIsWishlisted(!isWishlisted)
-  }
+  }  
+
   return (
     <div
-      className="bg-white rounded-xl overflow-hidden group cursor-pointer transition-all duration-500 hover:shadow-2xl hover:-translate-y-2 border border-gray-100"
+      className="bg-white rounded-lg sm:rounded-xl overflow-hidden group cursor-pointer transition-all duration-500 hover:shadow-2xl hover:-translate-y-1 sm:hover:-translate-y-2 border border-gray-100"
       onClick={handleCardClick}
       role="button"
       tabIndex={0}
@@ -85,7 +86,7 @@ export function ProductCard({
 
         {/* Colors indicator */}
         {colors && (
-          <div className="absolute top-4 right-4 bg-white bg-opacity-95 backdrop-blur-sm px-3 py-2 rounded-full shadow-lg">
+          <div className="absolute top-2 sm:top-4 right-2 sm:right-4 bg-white bg-opacity-95 backdrop-blur-sm px-2 sm:px-3 py-1 sm:py-2 rounded-full shadow-lg">
             <span className="text-xs text-gray-700 font-semibold">{colors} Colors</span>
           </div>
         )}
@@ -93,10 +94,10 @@ export function ProductCard({
         {/* Wishlist button */}
         <button 
           onClick={handleToggleWishlist}
-          className="absolute top-4 left-4 p-3 bg-white bg-opacity-95 backdrop-blur-sm rounded-full hover:bg-white transition-all duration-300 group/heart shadow-lg"
+          className="absolute top-2 sm:top-4 left-2 sm:left-4 p-2 sm:p-3 bg-white bg-opacity-95 backdrop-blur-sm rounded-full hover:bg-white transition-all duration-300 group/heart shadow-lg"
         >
           <Heart 
-            className={`h-5 w-5 transition-colors duration-200 ${
+            className={`h-4 w-4 sm:h-5 sm:w-5 transition-colors duration-200 ${
               isWishlisted 
                 ? 'text-red-500 fill-red-500' 
                 : 'text-gray-600 group-hover/heart:text-red-500'
@@ -109,18 +110,18 @@ export function ProductCard({
       </div>
 
       {/* Product Info */}
-      <div className="p-8 text-center bg-white">
-        <h3 className="font-serif font-light text-gray-900 mb-3 text-xl tracking-wide group-hover:text-gray-700 transition-colors">
+      <div className="p-4 sm:p-6 lg:p-8 text-center bg-white">
+        <h3 className="font-serif font-light text-gray-900 mb-2 sm:mb-3 text-base sm:text-lg lg:text-xl tracking-wide group-hover:text-gray-700 transition-colors">
           {name}
         </h3>
-        <p className="text-gray-600 text-sm mb-4 leading-relaxed font-light">
+        <p className="text-gray-600 text-xs sm:text-sm mb-3 sm:mb-4 leading-relaxed font-light">
           {description}
         </p>
-        <div className="mb-6">
-          <span className="text-2xl font-bold text-gray-900 font-serif">
+        <div className="mb-4 sm:mb-6">
+          <span className="text-lg sm:text-xl lg:text-2xl font-bold text-gray-900 font-serif">
             {price}
           </span>
-          <div className="text-xs text-gray-500 mt-2 font-light tracking-wide">
+          <div className="text-xs text-gray-500 mt-1 sm:mt-2 font-light tracking-wide">
             MRP (incl. of all taxes)
           </div>
         </div>
@@ -128,9 +129,9 @@ export function ProductCard({
         {/* Add to Cart Button */}
         <button 
           onClick={handleAddToCart}
-          className="w-full bg-gray-900 text-white py-4 px-6 hover:bg-gray-800 transition-all duration-300 flex items-center justify-center gap-3 font-medium tracking-wide group/btn rounded-lg shadow-md"
+          className="w-full bg-gray-900 text-white py-3 sm:py-4 px-4 sm:px-6 hover:bg-gray-800 transition-all duration-300 flex items-center justify-center gap-2 sm:gap-3 font-medium tracking-wide group/btn rounded-lg shadow-md text-sm sm:text-base"
         >
-          <ShoppingBag className="h-5 w-5 group-hover/btn:scale-110 transition-transform" />
+          <ShoppingBag className="h-4 w-4 sm:h-5 sm:w-5 group-hover/btn:scale-110 transition-transform" />
           Add to Cart
         </button>
       </div>

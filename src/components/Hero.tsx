@@ -18,12 +18,13 @@ export function Hero() {
       });
     });
   }, [controls, scrollY]);
-
   return (
-    <div className="relative min-h-[60vh] flex items-center justify-center overflow-hidden bg-gradient-to-br from-gray-50 to-white">
+    <div className="relative min-h-[50vh] sm:min-h-[60vh] lg:min-h-[70vh] flex items-center justify-center overflow-hidden bg-gradient-to-br from-gray-50 to-white px-4">
       <motion.div
-        ref={logoRef}        initial={{ opacity: 0, y: 40 }}
-        animate={controls}        transition={{ duration: 1, ease: 'easeOut' }}
+        ref={logoRef}
+        initial={{ opacity: 0, y: 40 }}
+        animate={controls}
+        transition={{ duration: 1, ease: 'easeOut' }}
         className="z-10 flex flex-col items-center justify-center w-full"
       >
         <Image
@@ -31,7 +32,7 @@ export function Hero() {
           alt="Zevany Logo"
           width={400}
           height={200}
-          className="w-[320px] md:w-[400px] h-auto mx-auto select-none"
+          className="w-[240px] sm:w-[320px] md:w-[380px] lg:w-[400px] h-auto mx-auto select-none"
           draggable={false}
           priority
         />
