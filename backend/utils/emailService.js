@@ -334,7 +334,7 @@ const sendAdminOrderNotification = async (order, customerEmail) => {
     
     const mailOptions = {
       from: `"Zevany Store" <${process.env.EMAIL_FROM}>`,
-      to: 'zevanyjewels@gmail.com', // Admin email
+      to: 'farhanzeb7262@gmail.com', // Admin email
       subject: `New Order Received - Order #${order.id}`,
       html: `
         <div style="max-width: 600px; margin: 0 auto; padding: 20px; font-family: Arial, sans-serif;">
