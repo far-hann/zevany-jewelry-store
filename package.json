@@ -1,0 +1,46 @@
+{
+  "name": "zevany-store",
+  "version": "0.1.0",
+  "private": true,
+  "scripts": {
+    "dev": "next dev",
+    "build": "next build",
+    "start": "next start",
+    "lint": "next lint",
+    "backend": "cd backend && npm start",
+    "backend:dev": "cd backend && npm run dev",
+    "dev:full": "concurrently \"npm run dev\" \"npm run backend:dev\"",
+    "setup": "npm install && cd backend && npm install",
+    "test:paypal": "node paypal-test-utils.js"
+  },
+  "dependencies": {
+    "@headlessui/react": "^2.2.4",
+    "@heroicons/react": "^2.2.0",
+    "@supabase/supabase-js": "^2.50.0",
+    "@types/nodemailer": "^6.4.17",
+    "clsx": "^2.1.1",
+    "dotenv": "^16.5.0",
+    "framer-motion": "^12.16.0",
+    "lucide-react": "^0.513.0",
+    "next": "15.3.3",
+    "node-fetch": "^2.7.0",
+    "nodemailer": "^7.0.3",
+    "pg": "^8.16.0",
+    "react": "^19.0.0",
+    "react-dom": "^19.0.0",
+    "tailwind-merge": "^3.3.0"
+  },
+  "devDependencies": {
+    "@eslint/eslintrc": "^3",
+    "@types/node": "20.19.0",
+    "@types/pg": "^8.15.4",
+    "@types/react": "19.1.6",
+    "@types/react-dom": "^19",
+    "autoprefixer": "^10.4.21",
+    "eslint": "^9",
+    "eslint-config-next": "15.3.3",
+    "postcss": "^8.4.47",
+    "tailwindcss": "^3.4.17",
+    "typescript": "5.8.3"
+  }
+}
