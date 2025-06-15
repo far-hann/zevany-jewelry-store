@@ -78,15 +78,41 @@ export default function Home() {
               transition={{ duration: 1.5, delay: 1.5 }}
               className="h-0.5 bg-gradient-to-r from-transparent via-amber-400 to-transparent rounded-full"
             />
-            
-            <motion.div
+              <motion.div
               animate={{ rotate: -360 }}
               transition={{ duration: 4, repeat: Infinity, ease: "linear" }}
               whileHover={{ scale: 1.2 }}
             >
               <Sparkles className="h-4 w-4 sm:h-5 sm:w-5 text-amber-500 ml-4 sm:ml-6 cursor-pointer" />
             </motion.div>
-          </motion.div>        </div>
+          </motion.div>
+
+          {/* Explore Collection Button */}
+          <motion.div
+            initial={{ opacity: 0, y: 30 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 1, delay: 2.0 }}
+            className="mt-12 sm:mt-16"
+          >
+            <motion.a
+              href="/collections"
+              whileHover={{ 
+                scale: 1.05,
+                boxShadow: "0 10px 30px rgba(0, 0, 0, 0.2)",
+                backgroundColor: "#f59e0b"
+              }}
+              whileTap={{ scale: 0.95 }}
+              className="inline-flex items-center px-6 py-3 sm:px-8 sm:py-4 bg-gradient-to-r from-amber-600 to-yellow-600 text-white font-medium rounded-full hover:from-amber-700 hover:to-yellow-700 transition-all duration-300 shadow-lg text-sm sm:text-base"
+            >
+              <span className="mr-2">Explore Collection</span>
+              <motion.div
+                animate={{ x: [0, 5, 0] }}
+                transition={{ duration: 2, repeat: Infinity }}
+              >
+                →
+              </motion.div>
+            </motion.a>
+          </motion.div></div>
       </div>
     </div>
   );

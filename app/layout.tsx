@@ -23,6 +23,16 @@ const cormorantGaramond = Cormorant_Garamond({
 export const metadata: Metadata = {
   title: 'ZEVANY - Luxury Jewelry Store',
   description: 'Discover exquisite luxury jewelry at ZEVANY. Shop premium rings, necklaces, earrings, and bracelets.',
+  icons: {
+    icon: [
+      { url: '/favicon.svg', type: 'image/svg+xml' },
+      { url: '/favicon-16x16.svg', type: 'image/svg+xml', sizes: '16x16' },
+      { url: '/favicon-32x32.svg', type: 'image/svg+xml', sizes: '32x32' }
+    ],
+    apple: [
+      { url: '/apple-touch-icon.svg', type: 'image/svg+xml', sizes: '180x180' }
+    ]
+  }
 };
 
 export default function RootLayout({
