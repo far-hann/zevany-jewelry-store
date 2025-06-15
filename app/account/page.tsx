@@ -3,13 +3,14 @@
 import { User, Mail, Phone, MapPin, Calendar, Heart } from 'lucide-react'
 import { useSearchParams } from "next/navigation";
 import { Suspense } from "react";
+import Link from 'next/link';
 
 function AccountContent() {
   const searchParams = useSearchParams();
   const unauthorized = searchParams ? searchParams.get("unauthorized") : null;
 
   return (
-    <div className="min-h-screen bg-white">
+    <div className="min-h-screen" style={{ background: '#f5f3ea' }}>
       {unauthorized && (
         <div className="bg-red-100 border border-red-400 text-red-700 px-4 py-3 rounded mb-6" role="alert">
           <strong className="font-bold">Access Denied:</strong>
@@ -79,11 +80,13 @@ function AccountContent() {
                     <Heart className="h-6 w-6 text-green-600" />
                   </div>
                   <h3 className="text-lg font-semibold ml-4">Order History</h3>
-                </div>
-                <p className="text-gray-600 mb-4">View your past purchases and track orders</p>
-                <button className="text-green-600 hover:text-green-800 font-medium">
+                </div>                <p className="text-gray-600 mb-4">View your past purchases and track orders</p>
+                <Link 
+                  href="/orders" 
+                  className="text-green-600 hover:text-green-800 font-medium transition-colors"
+                >
                   View Orders →
-                </button>
+                </Link>
               </div>
               
               <div className="bg-white border border-gray-200 rounded-lg p-6 hover:shadow-lg transition-shadow">

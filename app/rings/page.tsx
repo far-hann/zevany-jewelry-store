@@ -1,12 +1,23 @@
+"use client"
+
 import ProductCard from '@/components/ProductCard'
 import { products } from '@/data/products'
+import { generateCategoryJsonLd } from '@/utils/categorySeo'
 
 export default function Rings() {
   // Filter only ring products by checking the image path
   const ringProducts = products.filter(p => p.images[0]?.includes('/rings/'));
-  return (
-    <div className="min-h-screen bg-stone-100">
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12">{/* Header Section */}
+    return (
+    <>
+      {/* Structured Data for SEO */}
+      {generateCategoryJsonLd({
+        category: 'rings',
+        description: 'Discover our stunning collection of luxury rings. From elegant engagement rings to statement cocktail rings, each piece is crafted with precision and timeless elegance.'
+      })}
+      
+      <div className="min-h-screen" style={{ background: '#f5f3ea' }}>
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
+          {/* Header Section */}
         <div className="text-center mb-12">
           <h1 className="font-serif text-4xl font-light text-gray-900 mb-6 tracking-wide">Complete the Look</h1>
         </div>
@@ -36,10 +47,10 @@ export default function Rings() {
               stroke="currentColor" 
               viewBox="0 0 24 24"
             >
-              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
-            </svg>          </button>
+              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />            </svg>
+          </button>        </div>
         </div>
       </div>
-    </div>
+    </>
   )
 }

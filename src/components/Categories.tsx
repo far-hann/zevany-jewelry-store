@@ -1,9 +1,9 @@
 'use client'
 
 import Link from 'next/link'
-import Image from 'next/image'
 import { motion } from 'framer-motion'
 import { useState } from 'react'
+import OptimizedImage from './OptimizedImage'
 
 // Image component with fallback for missing images
 function ImageWithFallback({ src, alt, category, className }: { 
@@ -12,7 +12,7 @@ function ImageWithFallback({ src, alt, category, className }: {
   category: string; 
   className: string; 
 }) {
-  const [imageError, setImageError] = useState(false)
+  const [imageError] = useState(false)
   
   const getEmoji = (category: string) => {
     switch (category) {
@@ -38,14 +38,29 @@ function ImageWithFallback({ src, alt, category, className }: {
       </div>
     )
   }
-
+  // SVGs: never use fill, always use width/height
+  if (src.endsWith('.svg')) {
+    return (
+      <OptimizedImage
+        src={src}
+        alt={alt}
+        width={400}
+        height={200}
+        className={className}
+        loading="eager"
+        quality={100}
+      />
+    )
+  }
   return (
-    <Image
+    <OptimizedImage
       src={src}
       alt={alt}
       fill
       className={className}
-      onError={() => setImageError(true)}
+      sizes="(max-width: 768px) 50vw, (max-width: 1200px) 25vw, 20vw"
+      loading="lazy"
+      quality={85}
     />
   )
 }
@@ -84,27 +99,26 @@ export function Categories() {
       featured: true,
       itemCount: '65+ pieces'
     }
-  ];
-
+  ]
   return (
-    <section className="py-12 sm:py-16 lg:py-20 bg-gradient-to-b from-white to-gray-50">
+    <section className="py-20 bg-gradient-to-b from-white to-gray-50">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <motion.div
           initial={{ opacity: 0, y: 30 }}
           whileInView={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.8 }}
           viewport={{ once: true }}
-          className="text-center mb-8 sm:mb-12 lg:mb-16"
+          className="text-center mb-16"
         >
-          <h2 className="text-2xl sm:text-3xl md:text-4xl lg:text-5xl font-light text-gray-900 mb-4 font-serif">
+          <h2 className="text-4xl md:text-5xl font-light text-gray-900 mb-4 font-serif">
             Shop by Category
           </h2>
-          <p className="text-base sm:text-lg lg:text-xl text-gray-600 max-w-2xl mx-auto font-serif px-4">
+          <p className="text-xl text-gray-600 max-w-2xl mx-auto font-serif">
             Explore our curated collections of fine jewelry, each piece designed to capture your unique style
           </p>
-          <div className="mt-4 sm:mt-6 w-16 sm:w-24 h-1 bg-gradient-to-r from-yellow-400 to-yellow-600 mx-auto rounded-full"></div>
-        </motion.div>        {/* Enhanced Category Grid - Responsive Layout */}
-        <div className="grid grid-cols-2 lg:grid-cols-4 gap-3 sm:gap-4 lg:gap-6 mb-12 sm:mb-16 lg:mb-20 max-w-full overflow-hidden">
+          <div className="mt-6 w-24 h-1 bg-gradient-to-r from-yellow-400 to-yellow-600 mx-auto rounded-full"></div>
+        </motion.div>{/* Enhanced Category Grid - Single Row Layout */}
+        <div className="grid grid-cols-2 lg:grid-cols-4 gap-4 lg:gap-6 mb-20 max-w-full overflow-hidden">
           {categories.map((category, index) => (
             <motion.div
               key={category.name}
@@ -112,14 +126,11 @@ export function Categories() {
               whileInView={{ opacity: 1, y: 0 }}
               transition={{ duration: 0.8, delay: index * 0.1 }}
               viewport={{ once: true }}
-              className="group relative overflow-hidden bg-white rounded-lg sm:rounded-xl lg:rounded-2xl shadow-lg hover:shadow-2xl transition-all duration-500 w-full"
-            >
-              <Link href={category.href}>
-                <div className="aspect-[3/4] relative">
+              className="group relative overflow-hidden bg-white rounded-xl lg:rounded-2xl shadow-lg hover:shadow-2xl transition-all duration-500 w-full"
+            >              <Link href={category.href}>
+                <div className="aspect-[3/4] lg:aspect-[3/4] relative">
                   {/* Enhanced gradient overlay */}
-                  <div className="absolute inset-0 bg-gradient-to-t from-black/70 via-black/20 to-transparent z-10 group-hover:from-black/80 transition-all duration-300" />
-
-                  {/* Category Image */}
+                  <div className="absolute inset-0 bg-gradient-to-t from-black/70 via-black/20 to-transparent z-10 group-hover:from-black/80 transition-all duration-300" />                  {/* Category Image */}
                   <ImageWithFallback
                     src={category.image}
                     alt={category.name}
@@ -128,20 +139,19 @@ export function Categories() {
                   />
 
                   {/* Enhanced content overlay */}
-                  <div className="absolute bottom-0 left-0 right-0 p-3 sm:p-4 lg:p-6 z-20">
-                    <div className="transform group-hover:-translate-y-1 lg:group-hover:-translate-y-2 transition-transform duration-300">
-                      <h3 className="text-sm sm:text-base lg:text-2xl font-semibold text-white mb-1 lg:mb-2 group-hover:text-yellow-300 transition-colors font-serif">
+                  <div className="absolute bottom-0 left-0 right-0 p-4 lg:p-6 z-20">
+                    <div className="transform group-hover:-translate-y-2 transition-transform duration-300">
+                      <h3 className="text-lg lg:text-2xl font-semibold text-white mb-1 lg:mb-2 group-hover:text-yellow-300 transition-colors font-serif">
                         {category.name}
                       </h3>
-                      <p className="text-gray-200 text-xs lg:text-sm mb-1 lg:mb-2 font-serif hidden lg:block">
+                      <p className="text-gray-200 text-xs lg:text-sm mb-1 lg:mb-2 font-serif hidden sm:block">
                         {category.description}
                       </p>
-                      <p className="text-yellow-300 text-xs font-medium mb-1 sm:mb-2 lg:mb-4 font-serif">
+                      <p className="text-yellow-300 text-xs font-medium mb-2 lg:mb-4 font-serif">
                         {category.itemCount}
                       </p>
                       <span className="inline-flex items-center text-white font-medium group-hover:text-yellow-300 transition-colors text-xs lg:text-sm font-serif">
-                        <span className="hidden sm:inline">Explore Collection</span>
-                        <span className="sm:hidden">Shop</span>
+                        Explore Collection
                         <svg className="ml-1 lg:ml-2 h-3 w-3 lg:h-4 lg:w-4 group-hover:translate-x-1 transition-transform" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                           <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
                         </svg>
@@ -150,7 +160,7 @@ export function Categories() {
                   </div>
 
                   {/* Decorative corner element */}
-                  <div className="absolute top-2 lg:top-4 right-2 lg:right-4 w-4 h-4 sm:w-6 sm:h-6 lg:w-8 lg:h-8 border-2 border-white/30 rounded-full opacity-0 group-hover:opacity-100 transition-opacity duration-300"></div>
+                  <div className="absolute top-2 lg:top-4 right-2 lg:right-4 w-6 h-6 lg:w-8 lg:h-8 border-2 border-white/30 rounded-full opacity-0 group-hover:opacity-100 transition-opacity duration-300"></div>
                 </div>
               </Link>
             </motion.div>
@@ -161,19 +171,19 @@ export function Categories() {
           whileInView={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.8, delay: 0.2 }}
           viewport={{ once: true }}
-          className="bg-white rounded-2xl sm:rounded-3xl shadow-xl p-6 sm:p-8 md:p-12 lg:p-16 mb-12 sm:mb-16 lg:mb-20 border border-gray-100"
+          className="bg-white rounded-3xl shadow-xl p-8 md:p-16 mb-20 border border-gray-100"
         >
-          <div className="text-center mb-8 sm:mb-12 lg:mb-16">
-            <h3 className="text-2xl sm:text-3xl md:text-4xl lg:text-5xl font-light text-gray-900 mb-4 sm:mb-6 font-serif">
+          <div className="text-center mb-16">
+            <h3 className="text-4xl md:text-5xl font-light text-gray-900 mb-6 font-serif">
               Featured This Season
             </h3>
-            <p className="text-base sm:text-lg lg:text-xl text-gray-600 max-w-3xl mx-auto font-serif leading-relaxed px-4">
+            <p className="text-xl text-gray-600 max-w-3xl mx-auto font-serif leading-relaxed">
               Discover our handpicked selection of exceptional pieces, carefully chosen to complement any style and celebrate life&apos;s most precious moments
             </p>
-            <div className="mt-4 sm:mt-6 lg:mt-8 w-20 sm:w-24 lg:w-32 h-1 bg-gradient-to-r from-yellow-400 to-yellow-600 mx-auto rounded-full"></div>
+            <div className="mt-8 w-32 h-1 bg-gradient-to-r from-yellow-400 to-yellow-600 mx-auto rounded-full"></div>
           </div>
           
-          <div className="grid grid-cols-2 lg:grid-cols-4 gap-4 sm:gap-6 lg:gap-8 xl:gap-12">{/* Enhanced Featured Product Cards */}
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-8 lg:gap-12">            {/* Enhanced Featured Product Cards */}
             {[
               {
                 name: 'Diamond Solitaire Ring',
@@ -239,8 +249,7 @@ export function Categories() {
 
                   {/* Product Image */}
                   <div className="relative aspect-square bg-white rounded-2xl mb-6 overflow-hidden">
-                    <div className="absolute inset-0 bg-gradient-to-t from-gray-100/50 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300"></div>
-                    <ImageWithFallback
+                    <div className="absolute inset-0 bg-gradient-to-t from-gray-100/50 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300"></div>                    <ImageWithFallback
                       src={product.image}
                       alt={product.name}
                       category={product.category}

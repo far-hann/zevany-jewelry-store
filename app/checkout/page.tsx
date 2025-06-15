@@ -1,6 +1,5 @@
 "use client";
 import React, { useState, useEffect, useCallback } from "react";
-import { Footer } from '@/components/Footer'
 import { Lock, Package2, Gift } from 'lucide-react'
 import Link from 'next/link'
 import Image from 'next/image'
@@ -257,13 +256,11 @@ export default function CheckoutPage() {  const [cart, setCart] = useState<CartI
             <p className="text-gray-600 mb-8 font-serif">Add some items to your cart before checking out</p>
             <Link 
               href="/collections" 
-              className="bg-gray-900 text-white px-8 py-3 rounded-lg hover:bg-gray-800 transition-colors font-serif"
-            >
+              className="bg-gray-900 text-white px-8 py-3 rounded-lg hover:bg-gray-800 transition-colors font-serif"            >
               Browse Collections
             </Link>
           </div>
         </div>
-        <Footer />
       </div>
     );
   }
@@ -442,10 +439,8 @@ export default function CheckoutPage() {  const [cart, setCart] = useState<CartI
                 </p>
               </div>
             </div>
-          </div>
-        </div>
+          </div>        </div>
       </div>
-      <Footer />
     </div>
   );
 }

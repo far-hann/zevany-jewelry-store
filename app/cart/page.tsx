@@ -1,7 +1,6 @@
 'use client'
 
 import { useState, useEffect, useCallback, useMemo } from 'react'
-import { Footer } from '@/components/Footer'
 import { ShoppingBag, X, Plus, Minus, Gift, Package2 } from 'lucide-react'
 import { products } from '@/data/products'
 import { removeFromCart } from '@/utils/cartWishlist'
@@ -122,11 +121,9 @@ export default function Cart() {
           <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
             {/* Cart Items */}
             <div className="lg:col-span-2 space-y-6">
-              {cartItems.map((item) => (
-                <div key={`${item.id}-${item.size || ''}-${item.color || ''}`} className="bg-white rounded-lg shadow-sm border border-gray-200 p-6">
-                  <div className="flex items-start space-x-4">
-                    <div className="relative w-32 h-32 bg-white rounded-lg overflow-hidden flex-shrink-0">
-                      <Image
+              {cartItems.map((item, idx) => (
+                <div key={`${item.id || idx}-${item.size || ''}-${item.color || ''}`} className="bg-white rounded-lg shadow-sm border border-gray-200 p-6">
+                  <div className="flex items-start space-x-4">                    <div className="relative w-32 h-32 bg-white rounded-lg overflow-hidden flex-shrink-0">                      <Image
                         src={item.image}
                         alt={item.name}
                         fill
@@ -307,12 +304,10 @@ export default function Cart() {
                 >
                   Continue Shopping
                 </Link>
-              </div>
-            </div>
+              </div>            </div>
           </div>
         )}
       </div>
-      <Footer />
     </div>
   )
 }

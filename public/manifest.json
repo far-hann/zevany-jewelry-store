@@ -1,0 +1,64 @@
+{
+  "name": "ZEVANY Luxury Jewelry Store",
+  "short_name": "ZEVANY",
+  "description": "Discover exquisite luxury jewelry at ZEVANY. Premium rings, necklaces, earrings, and bracelets crafted with precision and elegance.",
+  "start_url": "/",
+  "display": "standalone",
+  "background_color": "#f5f3ea",
+  "theme_color": "#1f2937",
+  "orientation": "portrait-primary",
+  "scope": "/",
+  "lang": "en-US",
+  "categories": ["shopping", "lifestyle", "jewelry"],
+  "icons": [
+    {
+      "src": "/images/brand/zevany-logo.svg",
+      "sizes": "any",
+      "type": "image/svg+xml",
+      "purpose": "any maskable"
+    },
+    {
+      "src": "/favicon.ico",
+      "sizes": "48x48",
+      "type": "image/x-icon"
+    }
+  ],
+  "shortcuts": [
+    {
+      "name": "Browse Rings",
+      "short_name": "Rings",
+      "description": "Explore our stunning ring collection",
+      "url": "/rings",
+      "icons": [
+        {
+          "src": "/favicon.ico",
+          "sizes": "48x48"
+        }
+      ]
+    },
+    {
+      "name": "Browse Necklaces",
+      "short_name": "Necklaces", 
+      "description": "Discover elegant necklaces",
+      "url": "/necklaces",
+      "icons": [
+        {
+          "src": "/favicon.ico",
+          "sizes": "48x48"
+        }
+      ]
+    },
+    {
+      "name": "Shopping Cart",
+      "short_name": "Cart",
+      "description": "View your shopping cart",
+      "url": "/cart",
+      "icons": [
+        {
+          "src": "/favicon.ico",
+          "sizes": "48x48"
+        }
+      ]
+    }
+  ]
+}

@@ -1,9 +1,9 @@
 'use client'
 
-import Image from 'next/image'
 import { Heart, ShoppingBag } from 'lucide-react'
 import { useState } from 'react'
 import { useRouter } from 'next/navigation'
+import Image from 'next/image'
 import {
   addToCart,
   addToWishlist,
@@ -19,6 +19,7 @@ interface ProductCardProps {
   image: string
   alt: string
   colors?: number
+  specifications?: Record<string, string | undefined>
 }
 
 export function ProductCard({ 
@@ -69,19 +70,20 @@ export function ProductCard({
 
   return (
     <div
-      className="bg-white rounded-lg sm:rounded-xl overflow-hidden group cursor-pointer transition-all duration-500 hover:shadow-2xl hover:-translate-y-1 sm:hover:-translate-y-2 border border-gray-100"
+      className="bg-white rounded-xl overflow-hidden group cursor-pointer transition-all duration-500 hover:shadow-2xl hover:-translate-y-1 sm:hover:-translate-y-2 border border-gray-100 w-full max-w-full"
       onClick={handleCardClick}
       role="button"
       tabIndex={0}
       onKeyDown={handleKeyDown}
-    >
-      {/* Product Image */}
-      <div className="relative aspect-square bg-gradient-to-br from-gray-50 to-gray-100 overflow-hidden">
-        <Image
+    >      {/* Product Image */}
+      <div className="relative aspect-square bg-gradient-to-br from-gray-50 to-gray-100 overflow-hidden w-full">        <Image
           src={image}
           alt={alt}
           fill
-          className="object-cover group-hover:scale-110 transition-transform duration-700"
+          className="object-cover group-hover:scale-105 sm:group-hover:scale-110 transition-transform duration-700"
+          sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"
+          priority={false}
+          loading="lazy"
         />
 
         {/* Colors indicator */}
@@ -110,15 +112,15 @@ export function ProductCard({
       </div>
 
       {/* Product Info */}
-      <div className="p-4 sm:p-6 lg:p-8 text-center bg-white">
-        <h3 className="font-serif font-light text-gray-900 mb-2 sm:mb-3 text-base sm:text-lg lg:text-xl tracking-wide group-hover:text-gray-700 transition-colors">
+      <div className="p-4 sm:p-6 lg:p-8 text-center bg-white w-full max-w-full overflow-hidden">
+        <h3 className="font-serif font-light text-gray-900 mb-2 sm:mb-3 text-lg sm:text-xl tracking-wide group-hover:text-gray-700 transition-colors break-words">
           {name}
         </h3>
-        <p className="text-gray-600 text-xs sm:text-sm mb-3 sm:mb-4 leading-relaxed font-light">
+        <p className="text-gray-600 text-xs sm:text-sm mb-3 sm:mb-4 leading-relaxed font-light break-words">
           {description}
         </p>
         <div className="mb-4 sm:mb-6">
-          <span className="text-lg sm:text-xl lg:text-2xl font-bold text-gray-900 font-serif">
+          <span className="text-xl sm:text-2xl font-bold text-gray-900 font-serif">
             {price}
           </span>
           <div className="text-xs text-gray-500 mt-1 sm:mt-2 font-light tracking-wide">

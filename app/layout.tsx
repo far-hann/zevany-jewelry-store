@@ -2,13 +2,13 @@ import type { Metadata } from "next";
 import { Inter, Cormorant_Garamond } from "next/font/google";
 import "./globals.css";
 import { Navbar } from "@/components/Navbar";
-import { Footer } from "@/components/Footer";
-import { Analytics } from "@vercel/analytics/next";
+import { SimpleFooter } from "@/components/SimpleFooter";
 
 const inter = Inter({
   variable: "--font-inter",
   subsets: ["latin"],
   display: 'swap',
+  preload: true,
 });
 
 const cormorantGaramond = Cormorant_Garamond({
@@ -16,30 +16,28 @@ const cormorantGaramond = Cormorant_Garamond({
   subsets: ["latin"],
   weight: ['300', '400', '500', '600', '700'],
   display: 'swap',
+  preload: true,
 });
 
+
 export const metadata: Metadata = {
-  title: "Zevany Store - Exquisite Jewelry Collection",
-  description: "Discover handcrafted rings, earrings, necklaces, and bracelets. Premium jewelry with timeless elegance.",
-  viewport: {
-    width: 'device-width',
-    initialScale: 1,
-    maximumScale: 1,
-  },
+  title: 'ZEVANY - Luxury Jewelry Store',
+  description: 'Discover exquisite luxury jewelry at ZEVANY. Shop premium rings, necklaces, earrings, and bracelets.',
 };
 
 export default function RootLayout({
   children,
-}: Readonly<{
+}: {
   children: React.ReactNode;
-}>) {
+}) {
   return (
     <html lang="en">
       <body className={`${inter.variable} ${cormorantGaramond.variable} antialiased font-sans bg-white`}>
         <Navbar />
-        {children}
-        <Footer />
-        <Analytics />
+        <main>
+          {children}
+        </main>
+        <SimpleFooter />
       </body>
     </html>
   );

@@ -1,3 +1,5 @@
+"use client"
+
 import ProductCard from '@/components/ProductCard'
 import { products } from '@/data/products'
 
@@ -8,7 +10,7 @@ export default function Collections() {
     .map(id => products.find(p => p.id === id))
     .filter((p): p is typeof products[number] => Boolean(p));
   return (
-    <div className="min-h-screen bg-stone-100">
+    <div className="min-h-screen" style={{ background: '#f5f3ea' }}>
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
         <div className="text-center mb-12">
           <h1 className="font-display text-4xl font-bold text-gray-900 mb-6">Complete the Look</h1>

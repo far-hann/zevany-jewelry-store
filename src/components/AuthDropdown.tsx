@@ -1,6 +1,7 @@
 'use client'
 
 import { useState } from 'react'
+import Link from 'next/link'
 import { User, Mail, Lock, Eye, EyeOff, LogOut } from 'lucide-react'
 
 interface AuthDropdownProps {
@@ -28,7 +29,6 @@ export function AuthDropdown({ user, onLogin, onLogout }: AuthDropdownProps) {
     password: '',
     confirmPassword: ''
   })
-
   const handleLogin = async (e: React.FormEvent) => {
     e.preventDefault()
     setLoading(true)
@@ -45,24 +45,46 @@ export function AuthDropdown({ user, onLogin, onLogout }: AuthDropdownProps) {
     }
 
     try {
-      await new Promise(resolve => setTimeout(resolve, 1000))
+      // Call actual login API
+      const response = await fetch('/api/auth/login', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+          email: loginData.email,
+          password: loginData.password
+        })
+      })
       
+      const result = await response.json()
+      
+      if (!response.ok || !result.success) {
+        setErrors({ general: result.error || 'Login failed. Please check your credentials.' })
+        setLoading(false)
+        return
+      }
+      
+      // Store user data and token
       const userData = {
-        firstName: 'Demo',
-        lastName: 'User',
-        email: loginData.email
+        firstName: result.user.firstName,
+        lastName: result.user.lastName,
+        email: result.user.email
       }
       
       localStorage.setItem('user', JSON.stringify(userData))
+      localStorage.setItem('token', result.token)
       onLogin(userData)
       setIsOpen(false)
-      setLoginData({ email: '', password: '' })    } catch {
+      setLoginData({ email: '', password: '' })
+      
+    } catch (error) {
+      console.error('Login error:', error)
       setErrors({ general: 'Login failed. Please try again.' })
     }
     
     setLoading(false)
   }
-
   const handleSignup = async (e: React.FormEvent) => {
     e.preventDefault()
     setLoading(true)
@@ -73,6 +95,7 @@ export function AuthDropdown({ user, onLogin, onLogout }: AuthDropdownProps) {
     if (!signupData.lastName) newErrors.lastName = 'Last name is required'
     if (!signupData.email) newErrors.email = 'Email is required'
     if (!signupData.password) newErrors.password = 'Password is required'
+    if (signupData.password.length < 8) newErrors.password = 'Password must be at least 8 characters'
     if (signupData.password !== signupData.confirmPassword) {
       newErrors.confirmPassword = 'Passwords do not match'
     }
@@ -84,19 +107,44 @@ export function AuthDropdown({ user, onLogin, onLogout }: AuthDropdownProps) {
     }
 
     try {
-      await new Promise(resolve => setTimeout(resolve, 1000))
+      // Call actual register API
+      const response = await fetch('/api/auth/register', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+          firstName: signupData.firstName,
+          lastName: signupData.lastName,
+          email: signupData.email,
+          password: signupData.password
+        })
+      })
       
+      const result = await response.json()
+      
+      if (!response.ok || !result.success) {
+        setErrors({ general: result.error || 'Registration failed. Please try again.' })
+        setLoading(false)
+        return
+      }
+      
+      // Store user data and token
       const userData = {
-        firstName: signupData.firstName,
-        lastName: signupData.lastName,
-        email: signupData.email
+        firstName: result.user.firstName,
+        lastName: result.user.lastName,
+        email: result.user.email
       }
       
       localStorage.setItem('user', JSON.stringify(userData))
+      localStorage.setItem('token', result.token)
       onLogin(userData)
       setIsOpen(false)
-      setSignupData({ firstName: '', lastName: '', email: '', password: '', confirmPassword: '' })    } catch {
-      setErrors({ general: 'Signup failed. Please try again.' })
+      setSignupData({ firstName: '', lastName: '', email: '', password: '', confirmPassword: '' })
+      
+    } catch (error) {
+      console.error('Signup error:', error)
+      setErrors({ general: 'Registration failed. Please try again.' })
     }
     
     setLoading(false)
@@ -112,12 +160,19 @@ export function AuthDropdown({ user, onLogin, onLogout }: AuthDropdownProps) {
           <User className="h-6 w-6" />
           <span className="text-sm font-medium">{user.firstName}</span>
         </button>
-        
-        {isOpen && (
+          {isOpen && (
           <div className="absolute right-0 mt-2 w-48 bg-white rounded-lg shadow-lg border border-gray-200 py-2 z-50">
             <div className="px-4 py-2 text-sm text-gray-900 border-b">
               {user.firstName} {user.lastName}
             </div>
+            <Link
+              href="/account"
+              onClick={() => setIsOpen(false)}
+              className="flex items-center w-full px-4 py-2 text-sm text-gray-700 hover:bg-gray-100"
+            >
+              <User className="h-4 w-4 mr-2" />
+              Account
+            </Link>
             <button
               onClick={() => {
                 onLogout()
@@ -143,11 +198,10 @@ export function AuthDropdown({ user, onLogin, onLogout }: AuthDropdownProps) {
         <User className="h-6 w-6" />
         <span className="text-sm font-medium">Account</span>
       </button>
-      
-      {isOpen && (
-        <div className="absolute right-0 mt-2 w-80 bg-white rounded-lg shadow-lg border border-gray-200 z-50">
+        {isOpen && (
+        <div className="absolute right-0 mt-2 w-80 bg-white rounded-lg shadow-lg border border-gray-200 z-50 max-h-[85vh] overflow-y-auto">
           {/* Tab Headers */}
-          <div className="flex border-b border-gray-200">
+          <div className="flex border-b border-gray-200 sticky top-0 bg-white z-10">
             <button
               onClick={() => setActiveTab('login')}
               className={`flex-1 py-3 px-4 text-sm font-medium ${
@@ -170,8 +224,7 @@ export function AuthDropdown({ user, onLogin, onLogout }: AuthDropdownProps) {
             </button>
           </div>
 
-          <div className="p-4">
-            {errors.general && (
+          <div className="p-4 pb-6">{errors.general && (
               <div className="mb-4 p-3 bg-red-50 border border-red-200 text-red-700 text-sm rounded">
                 {errors.general}
               </div>
@@ -305,13 +358,22 @@ export function AuthDropdown({ user, onLogin, onLogout }: AuthDropdownProps) {
                   {loading ? 'Creating Account...' : 'Create Account'}
                 </button>
               </form>
-            )}
-
-            <div className="mt-4 text-center text-sm text-gray-600">
+            )}            <div className="mt-4 text-center text-sm text-gray-600">
               {activeTab === 'login' 
                 ? "Track your orders and manage your account easily"
                 : "Join us to track orders and save your preferences"
               }
+            </div>
+            
+            <div className="border-t border-gray-200 mt-4 pt-4">
+              <Link
+                href="/account"
+                onClick={() => setIsOpen(false)}
+                className="flex items-center justify-center w-full px-4 py-2 text-sm text-gray-700 hover:bg-gray-100 rounded-md"
+              >
+                <User className="h-4 w-4 mr-2" />
+                Go to Account Page
+              </Link>
             </div>
           </div>
         </div>

@@ -11,22 +11,38 @@ export function Navbar() {
   const [wishlistCount, setWishlistCount] = useState(0)
   const [user, setUser] = useState<{ firstName: string; lastName: string; email: string } | null>(null)
   const [isMenuOpen, setIsMenuOpen] = useState(false)
+  const [isClient, setIsClient] = useState(false)
 
   useEffect(() => {
+    // Set client flag to prevent hydration mismatch
+    setIsClient(true)
+    
     function updateCounts() {
-      setCartCount(getCart().length)
-      setWishlistCount(getWishlist().length)
-    }
-    function updateUser() {
-      const storedUser = localStorage.getItem('user')
-      if (storedUser) {
-        setUser(JSON.parse(storedUser))
-      } else {
-        setUser(null)
+      if (typeof window !== 'undefined') {
+        setCartCount(getCart().length)
+        setWishlistCount(getWishlist().length)
       }
     }
+    function updateUser() {
+      if (typeof window !== 'undefined') {
+        const storedUser = localStorage.getItem('user')
+        if (storedUser) {
+          try {
+            setUser(JSON.parse(storedUser))
+          } catch (error) {
+            console.error('Error parsing user data:', error)
+            localStorage.removeItem('user')
+            setUser(null)
+          }
+        } else {
+          setUser(null)
+        }
+      }
+    }
+    
     updateCounts()
     updateUser()
+    
     window.addEventListener('storage', updateCounts)
     window.addEventListener('cartWishlistUpdate', updateCounts)
     window.addEventListener('storage', updateUser)
@@ -52,6 +68,7 @@ export function Navbar() {
         <div className="flex items-center justify-between h-16 lg:h-20">
           {/* Logo */}
           <Link href="/" className="flex items-center select-none">
+            {/* Small, non-animated logo for navbar */}
             <span className="text-2xl sm:text-3xl lg:text-4xl font-serif font-normal tracking-tight text-gray-900 leading-none">ZEVANY</span>
           </Link>
 
@@ -75,13 +92,11 @@ export function Navbar() {
             >
               {isMenuOpen ? <X className="h-6 w-6" /> : <Menu className="h-6 w-6" />}
             </button>
-          </div>
-
-          {/* Desktop Right Side Icons */}
+          </div>          {/* Desktop Right Side Icons */}
           <div className="hidden lg:flex items-center space-x-4 xl:space-x-6">
             <Link href="/wishlist" className="relative p-2 text-gray-900 hover:text-gray-700 transition-colors">
               <Heart className="h-6 w-6" />
-              {wishlistCount > 0 && (
+              {isClient && wishlistCount > 0 && (
                 <span className="absolute -top-1 -right-1 bg-gray-900 text-white text-xs rounded-full h-5 w-5 flex items-center justify-center font-sans font-bold">
                   {wishlistCount}
                 </span>
@@ -89,7 +104,7 @@ export function Navbar() {
             </Link>
             <Link href="/cart" className="relative p-2 text-gray-900 hover:text-gray-700 transition-colors">
               <ShoppingBag className="h-6 w-6" />
-              {cartCount > 0 && (
+              {isClient && cartCount > 0 && (
                 <span className="absolute -top-1 -right-1 bg-gray-900 text-white text-xs rounded-full h-5 w-5 flex items-center justify-center font-sans font-bold">
                   {cartCount}
                 </span>
@@ -100,13 +115,11 @@ export function Navbar() {
               onLogin={handleLogin}
               onLogout={handleLogout}
             />
-          </div>
-
-          {/* Mobile Icons (visible on tablet and mobile) */}
+          </div>          {/* Mobile Icons (visible on tablet and mobile) */}
           <div className="flex lg:hidden items-center space-x-4">
             <Link href="/wishlist" className="relative p-2 text-gray-900 hover:text-gray-700 transition-colors">
               <Heart className="h-5 w-5" />
-              {wishlistCount > 0 && (
+              {isClient && wishlistCount > 0 && (
                 <span className="absolute -top-1 -right-1 bg-gray-900 text-white text-xs rounded-full h-4 w-4 flex items-center justify-center font-sans font-bold text-[10px]">
                   {wishlistCount}
                 </span>
@@ -114,7 +127,7 @@ export function Navbar() {
             </Link>
             <Link href="/cart" className="relative p-2 text-gray-900 hover:text-gray-700 transition-colors">
               <ShoppingBag className="h-5 w-5" />
-              {cartCount > 0 && (
+              {isClient && cartCount > 0 && (
                 <span className="absolute -top-1 -right-1 bg-gray-900 text-white text-xs rounded-full h-4 w-4 flex items-center justify-center font-sans font-bold text-[10px]">
                   {cartCount}
                 </span>
