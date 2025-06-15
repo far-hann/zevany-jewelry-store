@@ -22,7 +22,7 @@ export default function Home() {
             transition={{ duration: 1.2, ease: "easeOut" }}
             className="mb-8"
           >
-            <Crown className="h-16 w-16 mx-auto text-amber-600" />
+            <Crown className="h-12 w-12 sm:h-16 sm:w-16 mx-auto text-amber-600" />
           </motion.div>{/* Animated ZEVANY Text with Individual Letter Hover */}
           <motion.h1
             initial={{ opacity: 0, y: -100 }}
@@ -39,15 +39,19 @@ export default function Home() {
             }}
             className="text-3xl sm:text-4xl md:text-6xl lg:text-7xl xl:text-8xl font-serif font-light text-gray-900 tracking-[0.2em] sm:tracking-[0.3em] select-none mb-6"
           >
-            {['Z', 'E', 'V', 'A', 'N', 'Y'].map((letter, index) => (
-              <motion.span
+            {['Z', 'E', 'V', 'A', 'N', 'Y'].map((letter, index) => (              <motion.span
                 key={index}
                 whileHover={{
                   y: -10,
                   color: "#d97706",
                   transition: { duration: 0.2 }
                 }}
-                className="inline-block cursor-pointer transition-colors duration-200"
+                whileTap={{
+                  y: -10,
+                  color: "#d97706",
+                  transition: { duration: 0.2 }
+                }}
+                className="inline-block cursor-pointer transition-colors duration-200 touch-manipulation"
                 style={{ marginRight: index < 5 ? '0.1em' : '0' }}
               >
                 {letter}
@@ -65,7 +69,7 @@ export default function Home() {
               transition={{ duration: 4, repeat: Infinity, ease: "linear" }}
               whileHover={{ scale: 1.2 }}
             >
-              <Sparkles className="h-5 w-5 text-amber-500 mr-6 cursor-pointer" />
+              <Sparkles className="h-4 w-4 sm:h-5 sm:w-5 text-amber-500 mr-4 sm:mr-6 cursor-pointer" />
             </motion.div>
             
             <motion.div
@@ -80,7 +84,7 @@ export default function Home() {
               transition={{ duration: 4, repeat: Infinity, ease: "linear" }}
               whileHover={{ scale: 1.2 }}
             >
-              <Sparkles className="h-5 w-5 text-amber-500 ml-6 cursor-pointer" />
+              <Sparkles className="h-4 w-4 sm:h-5 sm:w-5 text-amber-500 ml-4 sm:ml-6 cursor-pointer" />
             </motion.div>
           </motion.div>        </div>
       </div>
