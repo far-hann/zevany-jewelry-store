@@ -1,6 +1,6 @@
 "use client"
 
-import ProductCard from '@/components/ProductCard'
+import ProductCard from '@/components/SimpleProductCard'
 import { products } from '@/data/products'
 
 export default function Necklaces() {
@@ -13,8 +13,7 @@ export default function Necklaces() {
         <div className="text-center mb-12">
           <h1 className="font-serif text-4xl font-light text-gray-900 mb-6 tracking-wide">Complete the Look</h1>
         </div>
-        {/* Products Grid */}
-        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-10 lg:gap-14 px-2 md:px-0">
+        {/* Products Grid */}        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-10 lg:gap-14 px-2 md:px-0">
           {necklaceProducts.map((product) => (
             <ProductCard
               key={product.id}
@@ -23,8 +22,7 @@ export default function Necklaces() {
               description={product.description}
               price={product.price}
               image={product.images[0]}
-              alt={product.name}
-              colors={Array.isArray(product.colors) ? product.colors.length : undefined}
+              alt={product.name}              colors={Array.isArray(product.colors) ? product.colors.length : undefined}
             />
           ))}
         </div>

@@ -44,11 +44,10 @@ export async function POST(request: NextRequest) {
         { status: 401 }
       );
     }
-    
-    // Generate JWT token
+      // Generate JWT token
     const token = jwt.sign(
       { userId: user.id, email: user.email, role: user.role },
-      process.env.JWT_SECRET!,
+      process.env.SUPABASE_SERVICE_ROLE_KEY!,
       { expiresIn: '24h' }
     );
     

@@ -25,25 +25,42 @@ export default function Cart() {
   const [isLoading, setIsLoading] = useState(false)
 
   useEffect(() => {
-    // Get cart from localStorage and convert to CartItem format
-    const storedCart = JSON.parse(localStorage.getItem('cart') || '[]')
-    
-    // If it's just an array of IDs, convert it to full cart items
-    if (storedCart.length > 0 && typeof storedCart[0] === 'string') {
-      const cartProducts = products.filter(product => storedCart.includes(product.id))
-      const fullCartItems = cartProducts.map(product => ({
-        id: product.id,
-        name: product.name,
-        image: product.images[0],
-        price: parseFloat(product.price.replace('$', '').replace(',', '')),
-        quantity: 1,
-        collection: product.collection
-      }))
-      setCartItems(fullCartItems)
-      // Update localStorage with full cart format
-      localStorage.setItem('cart', JSON.stringify(fullCartItems))
-    } else {
-      setCartItems(storedCart)
+    try {
+      // Get cart from localStorage and convert to CartItem format
+      const storedCart = JSON.parse(localStorage.getItem('cart') || '[]')
+      
+      // If it's just an array of IDs, convert it to full cart items
+      if (storedCart.length > 0 && typeof storedCart[0] === 'string') {
+        const cartProducts = products.filter(product => product && storedCart.includes(product.id))
+        const fullCartItems = cartProducts.map(product => ({
+          id: product.id,
+          name: product.name || 'Unknown Product',
+          image: (product.images && product.images.length > 0 && product.images[0]) ? product.images[0] : '/images/placeholder.jpg',
+          price: product.price ? parseFloat(product.price.replace('$', '').replace(',', '')) : 0,
+          quantity: 1,
+          collection: product.collection || ''
+        }))
+        setCartItems(fullCartItems)
+        // Update localStorage with full cart format
+        localStorage.setItem('cart', JSON.stringify(fullCartItems))
+      } else if (storedCart.length > 0) {
+        // Validate existing cart items and add fallback images
+        const validatedCartItems = storedCart.map((item: CartItem) => ({
+          ...item,
+          id: item.id || '',
+          name: item.name || 'Unknown Product',
+          image: (item.image && item.image.trim() && item.image !== '') ? item.image : '/images/placeholder.jpg',
+          price: typeof item.price === 'number' ? item.price : 0,
+          quantity: typeof item.quantity === 'number' ? item.quantity : 1,
+          collection: item.collection || ''
+        }))
+        setCartItems(validatedCartItems)
+      }
+    } catch (error) {
+      console.error('Error loading cart data:', error)
+      // Reset cart if there's an error
+      setCartItems([])
+      localStorage.setItem('cart', '[]')
     }
   }, [])
 
@@ -123,12 +140,24 @@ export default function Cart() {
             <div className="lg:col-span-2 space-y-6">
               {cartItems.map((item, idx) => (
                 <div key={`${item.id || idx}-${item.size || ''}-${item.color || ''}`} className="bg-white rounded-lg shadow-sm border border-gray-200 p-6">
-                  <div className="flex items-start space-x-4">                    <div className="relative w-32 h-32 bg-white rounded-lg overflow-hidden flex-shrink-0">                      <Image
-                        src={item.image}
-                        alt={item.name}
-                        fill
-                        className="object-cover"
-                      />
+                  <div className="flex items-start space-x-4">                    <div className="relative w-32 h-32 bg-gray-100 rounded-lg overflow-hidden flex-shrink-0">
+                      {item.image && item.image.trim() ? (
+                        <Image
+                          src={item.image}
+                          alt={item.name || 'Product Image'}
+                          fill
+                          className="object-cover"
+                          sizes="(max-width: 768px) 100vw, 128px"
+                          onError={(e) => {
+                            const target = e.target as HTMLImageElement;
+                            target.src = '/images/placeholder.jpg';
+                          }}
+                        />
+                      ) : (
+                        <div className="w-full h-full flex items-center justify-center bg-gray-200">
+                          <Package2 className="h-8 w-8 text-gray-400" />
+                        </div>
+                      )}
                     </div>
                     
                     <div className="flex-1 min-w-0">

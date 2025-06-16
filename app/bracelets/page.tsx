@@ -1,5 +1,5 @@
 "use client"
-import ProductCard from '@/components/ProductCard'
+import ProductCard from '@/components/SimpleProductCard'
 import { products } from '@/data/products'
 
 export default function Bracelets() {
@@ -13,8 +13,7 @@ export default function Bracelets() {
           <h1 className="font-serif text-4xl font-light text-gray-900 mb-6 tracking-wide">Complete the Look</h1>
         </div>
         {/* Products Grid */}
-        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-10 lg:gap-14 px-2 md:px-0">
-          {braceletProducts.map((product) => (
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-10 lg:gap-14 px-2 md:px-0">          {braceletProducts.map((product) => (
             <ProductCard
               key={product.id}
               id={product.id}
@@ -22,8 +21,7 @@ export default function Bracelets() {
               description={product.description}
               price={product.price}
               image={product.images[0]}
-              alt={product.name}
-              colors={Array.isArray(product.colors) ? product.colors.length : undefined}
+              alt={product.name}              colors={Array.isArray(product.colors) ? product.colors.length : undefined}
             />
           ))}
         </div>

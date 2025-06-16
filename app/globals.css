@@ -30,6 +30,48 @@ html {
   max-width: 100vw;
 }
 
+/* Performance optimizations for animations */
+* {
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+/* GPU acceleration for elements with animations */
+.will-change-transform {
+  will-change: transform, opacity;
+  transform: translateZ(0);
+  backface-visibility: hidden;
+  perspective: 1000px;
+}
+
+/* Optimize scrolling performance */
+html {
+  scroll-behavior: smooth;
+}
+
+/* Reduce motion for users who prefer it */
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+    scroll-behavior: auto !important;
+  }
+}
+
+/* Hardware acceleration for common animation properties */
+@media (min-width: 768px) {
+  .hover\\:scale-105:hover {
+    transform: scale(1.05) translateZ(0);
+  }
+  
+  .hover\\:scale-110:hover {
+    transform: scale(1.1) translateZ(0);
+  }
+}
+
 h1, h2, h3, h4, h5, h6 {
   font-family: var(--font-cormorant), serif;
   font-weight: 300;
@@ -91,4 +133,27 @@ h1, h2, h3, h4, h5, h6 {
 .container {
   max-width: 100%;
   overflow-x: hidden;
+}
+
+/* Custom responsive breakpoints for ZEVANY logo */
+@media (max-width: 390px) {
+  .zevany-text {
+    font-size: 2.5rem !important;
+    letter-spacing: 0.05em !important;
+  }
+}
+
+@media (max-width: 320px) {
+  .zevany-text {
+    font-size: 2rem !important;
+    letter-spacing: 0.03em !important;
+  }
+}
+
+/* Ensure minimum viewport for very small screens */
+@media (max-width: 280px) {
+  .zevany-text {
+    font-size: 1.8rem !important;
+    letter-spacing: 0.02em !important;
+  }
 }

@@ -1,6 +1,6 @@
 "use client"
 
-import ProductCard from '@/components/ProductCard'
+import ProductCard from '@/components/SimpleProductCard'
 import { products } from '@/data/products'
 
 export default function Collections() {
@@ -17,10 +17,8 @@ export default function Collections() {
           <p className="text-xl text-gray-600 max-w-2xl mx-auto">
             Discover our curated collections of fine jewelry, each piece crafted with precision and passion.
           </p>
-        </div>
-        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-10 lg:gap-14 px-2 md:px-0">
-          {featuredProducts.map((product) => (
-            <ProductCard
+        </div>        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-10 lg:gap-14 px-2 md:px-0">
+          {featuredProducts.map((product) => (            <ProductCard
               key={product.id}
               id={product.id}
               name={product.name}
