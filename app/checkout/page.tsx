@@ -478,13 +478,12 @@ export default function CheckoutPage() {
               {/* Promo Code Section */}
             <div className="bg-white rounded-lg shadow-sm border border-gray-200 p-6">
               <h3 className="text-lg font-medium text-gray-900 mb-4 font-serif">Promo Code</h3>
-              <div className="flex flex-col sm:flex-row space-y-2 sm:space-y-0 sm:space-x-2">
-                <input
+              <div className="flex flex-col sm:flex-row space-y-2 sm:space-y-0 sm:space-x-2">                <input
                   type="text"
                   value={promoCode}
                   onChange={(e) => setPromoCode(e.target.value)}
                   placeholder="Enter promo code"
-                  className="flex-1 px-3 py-2 border border-gray-300 rounded-md text-sm font-serif focus:outline-none focus:ring-2 focus:ring-gray-900"
+                  className="flex-1 px-3 py-2 border border-gray-300 rounded-md text-sm font-serif focus:outline-none focus:ring-2 focus:ring-gray-900 text-black"
                   onKeyPress={(e) => e.key === 'Enter' && handlePromoCode()}
                 />
                 <button

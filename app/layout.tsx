@@ -21,7 +21,7 @@ const cormorantGaramond = Cormorant_Garamond({
 
 
 export const metadata: Metadata = {
-  title: 'ZEVANY - Luxury Jewelry Store',
+  title: 'ZEVANY- handcrafted jewelry store',
   description: 'Discover exquisite luxury jewelry at ZEVANY. Shop premium rings, necklaces, earrings, and bracelets.',
   icons: {
     icon: [

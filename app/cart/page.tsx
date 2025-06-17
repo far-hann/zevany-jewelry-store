@@ -254,7 +254,7 @@ export default function Cart() {
                         </div>
                       </div>
                         {/* Quantity Controls */}
-                      <div className="mt-4 flex items-center justify-between">
+                      <div className="mt-4 flex flex-col sm:flex-row sm:items-center sm:justify-between gap-2">
                         <div className="flex items-center space-x-3">
                           <span className="text-sm font-medium text-gray-700 font-serif">Quantity:</span>
                           <div className="flex items-center border border-gray-300 rounded-md">
@@ -277,8 +277,7 @@ export default function Cart() {
                             </button>
                           </div>
                         </div>
-                        
-                        <div className="text-right">
+                        <div className="text-right w-full sm:w-auto">
                           <p className="text-lg font-medium text-gray-900 font-serif">
                             ${(item.price * item.quantity).toFixed(2)}
                           </p>

@@ -1,6 +1,6 @@
 "use client";
 
-import { User, Mail, Phone, MapPin, Calendar, Heart } from 'lucide-react'
+import { User, Mail, Phone, MapPin, Calendar, Heart, Package } from 'lucide-react'
 import { useSearchParams } from "next/navigation";
 import { Suspense } from "react";
 import Link from 'next/link';
@@ -74,19 +74,35 @@ function AccountContent() {
                   Edit Profile →
                 </button>
               </div>
-              
-              <div className="bg-white border border-gray-200 rounded-lg p-6 hover:shadow-lg transition-shadow">
+                <div className="bg-white border border-gray-200 rounded-lg p-6 hover:shadow-lg transition-shadow">
                 <div className="flex items-center mb-4">
                   <div className="bg-green-100 p-3 rounded-lg">
                     <Heart className="h-6 w-6 text-green-600" />
                   </div>
                   <h3 className="text-lg font-semibold ml-4">Order History</h3>
-                </div>                <p className="text-gray-600 mb-4">View your past purchases and track orders</p>
+                </div>
+                <p className="text-gray-600 mb-4">View your past purchases and order details</p>
                 <Link 
                   href="/orders" 
                   className="text-green-600 hover:text-green-800 font-medium transition-colors"
                 >
                   View Orders →
+                </Link>
+              </div>
+              
+              <div className="bg-white border border-gray-200 rounded-lg p-6 hover:shadow-lg transition-shadow">
+                <div className="flex items-center mb-4">
+                  <div className="bg-blue-100 p-3 rounded-lg">
+                    <Package className="h-6 w-6 text-blue-600" />
+                  </div>
+                  <h3 className="text-lg font-semibold ml-4">Track Order</h3>
+                </div>
+                <p className="text-gray-600 mb-4">Track your jewelry shipments and delivery status</p>
+                <Link 
+                  href="/track-order" 
+                  className="text-blue-600 hover:text-blue-800 font-medium transition-colors"
+                >
+                  Track Shipment →
                 </Link>
               </div>
               

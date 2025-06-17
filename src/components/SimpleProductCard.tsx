@@ -7,7 +7,6 @@ import {
   removeFromWishlist,
   getWishlist
 } from '../utils/cartWishlist'
-import ClientOnly from './ClientOnly'
 
 interface ProductCardProps {
   id: string | number
@@ -34,10 +33,13 @@ export function SimpleProductCard({
   isNew = false
 }: ProductCardProps) {
   const [isWishlisted, setIsWishlisted] = useState(false);
+  const [isClient, setIsClient] = useState(false);
 
   const router = useRouter()
-    // Initialize wishlist status on client side only
+  
+  // Initialize client state and wishlist status
   useEffect(() => {
+    setIsClient(true);
     if (typeof window !== 'undefined') {
       setIsWishlisted(getWishlist().includes(String(id)));
     }
@@ -87,8 +89,8 @@ export function SimpleProductCard({
           <div className={`absolute ${colors ? 'top-12' : 'top-3'} right-3 bg-amber-600 text-white text-xs font-medium px-2 py-1 rounded-full`}>
             NEW
           </div>
-        )}        {/* Wishlist button */}
-        <ClientOnly>
+        )}        {/* Wishlist button - only render on client */}
+        {isClient && (
           <button
             onClick={handleToggleWishlist}
             className="absolute top-3 left-3 p-2 bg-white/95 backdrop-blur-sm rounded-full shadow-lg z-10 hover:bg-white active:scale-95 hover:shadow-xl transition-all duration-300 group-hover:scale-110 group-hover:shadow-2xl"
@@ -101,7 +103,8 @@ export function SimpleProductCard({
                   : 'text-gray-600 group-hover:text-amber-600'
               }`}
             />
-          </button>        </ClientOnly>
+          </button>
+        )}
       </div>      {/* Product Info */}
       <div className="p-6 transition-all duration-500 group-hover:bg-gradient-to-br group-hover:from-white group-hover:to-amber-50/20">
         {category && (

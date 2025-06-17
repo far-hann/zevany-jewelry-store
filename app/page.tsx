@@ -1,17 +1,11 @@
 'use client'
 
-import { Crown, Sparkles } from 'lucide-react'
+import { Crown } from 'lucide-react'
 import { motion } from 'framer-motion'
 
 export default function Home() {
   return (
-    <div className="min-h-screen bg-gradient-to-br from-slate-50 via-white to-gray-50 relative overflow-hidden will-change-transform" style={{ transform: 'translateZ(0)' }}>
-      {/* Subtle Background Elements */}
-      <div className="absolute inset-0">
-        <div className="absolute top-10 left-10 w-40 h-40 bg-gradient-to-r from-amber-100 to-transparent rounded-full opacity-20 blur-3xl"></div>
-        <div className="absolute bottom-10 right-10 w-48 h-48 bg-gradient-to-r from-blue-100 to-transparent rounded-full opacity-15 blur-3xl"></div>
-        <div className="absolute top-1/2 left-1/4 w-32 h-32 bg-gradient-to-r from-purple-100 to-transparent rounded-full opacity-10 blur-2xl"></div>
-      </div>      {/* Main Content */}
+    <div className="min-h-screen bg-gradient-to-br from-slate-50 via-white to-gray-50 relative overflow-hidden will-change-transform" style={{ transform: 'translateZ(0)' }}>{/* Main Content */}
       <div className="flex items-center justify-center min-h-screen relative z-10 px-2 will-change-transform" style={{ transform: 'translateZ(0)' }}>
         <div className="text-center max-w-6xl mx-auto w-full overflow-hidden will-change-transform"
              style={{ minWidth: '280px', transform: 'translateZ(0)' }}
@@ -59,50 +53,7 @@ export default function Home() {
                 {letter}
               </motion.span>
             ))}
-          </motion.h1>          {/* Decorative Line with Faster Sparkles Animation */}
-          <motion.div
-            initial={{ opacity: 0, scale: 0 }}
-            animate={{ opacity: 1, scale: 1 }}
-            transition={{ duration: 0.5, delay: 0.6 }}
-            className="flex items-center justify-center mb-8"
-          >            <motion.div
-              animate={{ rotate: 360 }}
-              transition={{ 
-                duration: 8, 
-                repeat: Infinity, 
-                ease: "linear",
-                repeatType: "loop"
-              }}
-              whileHover={{ scale: 1.1 }}
-              className="will-change-transform"
-              style={{ transform: 'translateZ(0)' }}
-            >
-              <Sparkles className="h-4 w-4 sm:h-5 sm:w-5 text-amber-500 mr-4 sm:mr-6 cursor-pointer" />
-            </motion.div>            <motion.div
-              initial={{ scaleX: 0 }}
-              animate={{ scaleX: 1 }}
-              transition={{ 
-                duration: 0.6, 
-                delay: 0.5,
-                ease: [0.25, 0.46, 0.45, 0.94]
-              }}
-              className="h-0.5 w-[120px] bg-gradient-to-r from-transparent via-amber-400 to-transparent rounded-full will-change-transform"
-              style={{ transform: 'translateZ(0)', transformOrigin: 'center' }}
-            />              <motion.div
-              animate={{ rotate: -360 }}
-              transition={{ 
-                duration: 8, 
-                repeat: Infinity, 
-                ease: "linear",
-                repeatType: "loop"
-              }}
-              whileHover={{ scale: 1.1 }}
-              className="will-change-transform"
-              style={{ transform: 'translateZ(0)' }}
-            >
-              <Sparkles className="h-4 w-4 sm:h-5 sm:w-5 text-amber-500 ml-4 sm:ml-6 cursor-pointer" />
-            </motion.div>
-          </motion.div>          {/* Explore Collection Button */}
+          </motion.h1>{/* Explore Collection Button */}
           <motion.div
             initial={{ opacity: 0, y: 15 }}
             animate={{ opacity: 1, y: 0 }}

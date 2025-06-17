@@ -2,7 +2,7 @@
 
 import { useEffect, useState } from 'react'
 import Link from 'next/link'
-import { ShoppingBag, Heart, Menu, X } from 'lucide-react'
+import { ShoppingBag, Heart, Menu, X, User, Package, ChevronRight } from 'lucide-react'
 import { getCart, getWishlist } from '../utils/cartWishlist';
 import { AuthDropdown } from './AuthDropdown';
 import ClientOnly from './ClientOnly';
@@ -140,65 +140,204 @@ export function Navbar() {
               </ClientOnly>
             </Link>
           </div>
-        </div>        {/* Mobile Menu */}
+        </div>        {/* Mobile Menu - Full Screen Overlay */}
         <ClientOnly>
           {isMenuOpen && (
-            <div className="lg:hidden border-t border-gray-100">
-              <div className="px-2 pt-2 pb-3 space-y-1 bg-white">
-              <Link 
-                href="/" 
-                className="block px-3 py-2 text-base font-medium text-gray-900 hover:text-gray-700 hover:bg-gray-50 rounded-md"
+            <>
+              {/* Backdrop */}
+              <div 
+                className="fixed inset-0 bg-black bg-opacity-50 z-40 lg:hidden"
                 onClick={() => setIsMenuOpen(false)}
-              >
-                Home
-              </Link>
-              <Link 
-                href="/collections" 
-                className="block px-3 py-2 text-base font-medium text-gray-900 hover:text-gray-700 hover:bg-gray-50 rounded-md"
-                onClick={() => setIsMenuOpen(false)}
-              >
-                Collections
-              </Link>
-              <Link 
-                href="/rings" 
-                className="block px-3 py-2 text-base font-medium text-gray-900 hover:text-gray-700 hover:bg-gray-50 rounded-md"
-                onClick={() => setIsMenuOpen(false)}
-              >
-                Rings
-              </Link>
-              <Link 
-                href="/bracelets" 
-                className="block px-3 py-2 text-base font-medium text-gray-900 hover:text-gray-700 hover:bg-gray-50 rounded-md"
-                onClick={() => setIsMenuOpen(false)}
-              >
-                Bracelets
-              </Link>
-              <Link 
-                href="/necklaces" 
-                className="block px-3 py-2 text-base font-medium text-gray-900 hover:text-gray-700 hover:bg-gray-50 rounded-md"
-                onClick={() => setIsMenuOpen(false)}
-              >
-                Necklaces
-              </Link>
-              <Link 
-                href="/earrings" 
-                className="block px-3 py-2 text-base font-medium text-gray-900 hover:text-gray-700 hover:bg-gray-50 rounded-md"
-                onClick={() => setIsMenuOpen(false)}
-              >
-                Earrings
-              </Link>              
-              {/* Mobile Auth Section */}
-              <div className="border-t border-gray-100 pt-3 mt-3">
-                <div className="px-3">
-                  <AuthDropdown 
-                    user={user}
-                    onLogin={handleLogin}
-                    onLogout={handleLogout}
-                  />
+              />
+              
+              {/* Full Screen Menu */}
+              <div className={`fixed top-0 right-0 w-full h-full bg-white z-50 lg:hidden transform transition-transform duration-300 ease-in-out ${
+                isMenuOpen ? 'translate-x-0' : 'translate-x-full'
+              }`}>
+                <div className="flex flex-col h-full">
+                  {/* Header with Close Button */}
+                  <div className="flex items-center justify-between p-6 border-b border-gray-100">
+                    <span className="text-xl font-serif font-medium text-gray-900">Menu</span>
+                    <button
+                      onClick={() => setIsMenuOpen(false)}
+                      className="p-2 rounded-full hover:bg-gray-100 transition-colors"
+                    >
+                      <X className="h-6 w-6 text-gray-900" />
+                    </button>
+                  </div>
+                  
+                  {/* Account Section with Circle Avatar */}
+                  <div className="px-6 py-6 border-b border-gray-100">
+                    <div className="flex items-center space-x-4">
+                      <div className="w-12 h-12 bg-gray-100 rounded-full flex items-center justify-center">
+                        <User className="h-6 w-6 text-gray-600" />
+                      </div>
+                      <div className="flex-1">
+                        {user ? (
+                          <div>
+                            <p className="text-lg font-medium text-gray-900">{user.firstName} {user.lastName}</p>
+                            <p className="text-sm text-gray-500">{user.email}</p>
+                          </div>
+                        ) : (
+                          <div>
+                            <p className="text-lg font-medium text-gray-900">Welcome</p>
+                            <p className="text-sm text-gray-500">Sign in to your account</p>
+                          </div>
+                        )}
+                      </div>
+                    </div>
+                  </div>
+                  
+                  {/* Menu Items */}
+                  <div className="flex-1 overflow-y-auto">
+                    <div className="px-6 py-4 space-y-1">
+                      {/* New In */}
+                      <div className="py-4 border-b border-gray-100">
+                        <span className="text-lg font-medium text-gray-900">New In</span>
+                      </div>
+                      
+                      {/* Jewelry */}
+                      <div className="py-4 border-b border-gray-100">
+                        <div className="flex items-center justify-between">
+                          <span className="text-lg font-medium text-gray-900">Jewelry</span>
+                          <ChevronRight className="h-5 w-5 text-gray-400" />
+                        </div>
+                        <div className="mt-3 ml-4 space-y-3">
+                          <Link 
+                            href="/rings" 
+                            className="block text-base text-gray-700 hover:text-gray-900 transition-colors"
+                            onClick={() => setIsMenuOpen(false)}
+                          >
+                            Rings
+                          </Link>
+                          <Link 
+                            href="/necklaces" 
+                            className="block text-base text-gray-700 hover:text-gray-900 transition-colors"
+                            onClick={() => setIsMenuOpen(false)}
+                          >
+                            Necklaces
+                          </Link>
+                          <Link 
+                            href="/bracelets" 
+                            className="block text-base text-gray-700 hover:text-gray-900 transition-colors"
+                            onClick={() => setIsMenuOpen(false)}
+                          >
+                            Bracelets
+                          </Link>
+                          <Link 
+                            href="/earrings" 
+                            className="block text-base text-gray-700 hover:text-gray-900 transition-colors"
+                            onClick={() => setIsMenuOpen(false)}
+                          >
+                            Earrings
+                          </Link>
+                        </div>
+                      </div>
+                      
+                      {/* Collections */}
+                      <div className="py-4 border-b border-gray-100">
+                        <Link 
+                          href="/collections" 
+                          className="flex items-center justify-between"
+                          onClick={() => setIsMenuOpen(false)}
+                        >
+                          <span className="text-lg font-medium text-gray-900">Collections</span>
+                          <ChevronRight className="h-5 w-5 text-gray-400" />
+                        </Link>
+                      </div>
+                      
+                      {/* Account Section */}
+                      <div className="py-4 border-b border-gray-100">
+                        <div className="flex items-center justify-between">
+                          <span className="text-lg font-medium text-gray-900">Account</span>
+                          <ChevronRight className="h-5 w-5 text-gray-400" />
+                        </div>
+                        <div className="mt-3 ml-4 space-y-3">
+                          <Link 
+                            href="/account" 
+                            className="block text-base text-gray-700 hover:text-gray-900 transition-colors"
+                            onClick={() => setIsMenuOpen(false)}
+                          >
+                            My Account
+                          </Link>
+                          <Link 
+                            href="/orders" 
+                            className="block text-base text-gray-700 hover:text-gray-900 transition-colors"
+                            onClick={() => setIsMenuOpen(false)}
+                          >
+                            My Orders
+                          </Link>
+                          <Link 
+                            href="/track-order" 
+                            className="flex items-center text-base text-gray-700 hover:text-gray-900 transition-colors"
+                            onClick={() => setIsMenuOpen(false)}
+                          >
+                            <Package className="h-4 w-4 mr-2" />
+                            Track Order
+                          </Link>
+                          <Link 
+                            href="/wishlist" 
+                            className="flex items-center text-base text-gray-700 hover:text-gray-900 transition-colors"
+                            onClick={() => setIsMenuOpen(false)}
+                          >
+                            <Heart className="h-4 w-4 mr-2" />
+                            Wishlist ({wishlistCount})
+                          </Link>
+                        </div>
+                      </div>
+                      
+                      {/* About & Support */}
+                      <div className="py-4 border-b border-gray-100">
+                        <Link 
+                          href="/about" 
+                          className="flex items-center justify-between"
+                          onClick={() => setIsMenuOpen(false)}
+                        >
+                          <span className="text-lg font-medium text-gray-900">About</span>
+                          <ChevronRight className="h-5 w-5 text-gray-400" />
+                        </Link>
+                      </div>
+                      
+                      <div className="py-4 border-b border-gray-100">
+                        <Link 
+                          href="/support" 
+                          className="flex items-center justify-between"
+                          onClick={() => setIsMenuOpen(false)}
+                        >
+                          <span className="text-lg font-medium text-gray-900">Support</span>
+                          <ChevronRight className="h-5 w-5 text-gray-400" />
+                        </Link>
+                      </div>
+                    </div>
+                  </div>
+                  
+                  {/* Bottom Auth Actions */}
+                  <div className="px-6 py-6 border-t border-gray-100">
+                    <ClientOnly>
+                      {user ? (
+                        <button
+                          onClick={() => {
+                            handleLogout()
+                            setIsMenuOpen(false)
+                          }}
+                          className="w-full bg-gray-900 text-white py-3 px-4 rounded-lg font-medium hover:bg-gray-800 transition-colors"
+                        >
+                          Sign Out
+                        </button>
+                      ) : (
+                        <div className="space-y-3">
+                          <AuthDropdown 
+                            user={user}
+                            onLogin={handleLogin}
+                            onLogout={handleLogout}
+                          />
+                        </div>
+                      )}
+                    </ClientOnly>
+                  </div>
                 </div>
               </div>
-            </div>
-          </div>
+            </>
           )}
         </ClientOnly>
       </div>
