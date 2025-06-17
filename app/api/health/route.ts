@@ -13,13 +13,11 @@ export async function GET() {
       },
       environment: process.env.NODE_ENV || 'development',
       version: '1.0.0'
-    };
-
-    // Check environment variables
+    };    // Check environment variables
     const requiredEnvVars = [
       'NEXT_PUBLIC_PAYPAL_CLIENT_ID',
       'PAYPAL_CLIENT_SECRET',
-      'JWT_SECRET'
+      'SUPABASE_SERVICE_ROLE_KEY'
     ];
 
     const missingEnvVars = requiredEnvVars.filter(envVar => !process.env[envVar]);

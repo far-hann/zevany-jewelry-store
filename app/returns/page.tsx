@@ -1,8 +1,10 @@
+import MobilePageWrapper from '@/components/MobilePageWrapper'
+
 export default function ReturnsPage() {
   return (
-    <div className="min-h-screen bg-white">
-      <div className="max-w-4xl mx-auto px-4 py-16">
-        <h1 className="text-4xl font-serif text-gray-900 mb-8">Returns & Exchanges</h1>
+    <MobilePageWrapper title="Returns & Exchanges" showBackButton={true}>
+      <div className="max-w-4xl mx-auto px-4 lg:px-0 py-8 lg:py-16">
+        <h1 className="text-3xl lg:text-4xl font-serif text-gray-900 mb-8 hidden lg:block">Returns & Exchanges</h1>
         
         <div className="prose prose-lg text-gray-700 space-y-8">
           <section>
@@ -59,13 +61,12 @@ export default function ReturnsPage() {
 
           <section>
             <h2 className="text-2xl font-semibold text-gray-900 mb-4">Quality Guarantee</h2>
-            <p>
-              All ZEVANY jewelry comes with a lifetime warranty against manufacturing defects. 
+            <p>              All ZEVANY jewelry comes with a lifetime warranty against manufacturing defects. 
               If you experience any issues with craftsmanship, we&apos;ll repair or replace your item free of charge.
             </p>
           </section>
         </div>
       </div>
-    </div>
+    </MobilePageWrapper>
   )
 }

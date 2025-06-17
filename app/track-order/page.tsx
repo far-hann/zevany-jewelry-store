@@ -109,27 +109,25 @@ export default function OrderTrackingPage() {
               <div>
                 <label htmlFor="orderNumber" className="block text-sm font-medium text-gray-700 mb-2">
                   Order Number
-                </label>
-                <input
+                </label>                <input
                   type="text"
                   id="orderNumber"
                   value={searchQuery}
                   onChange={(e) => setSearchQuery(e.target.value)}
                   placeholder="e.g. ZEV-2024-001234"
-                  className="w-full border border-gray-300 rounded-md px-3 py-2 focus:outline-none focus:ring-2 focus:ring-gray-900 focus:border-transparent"
+                  className="w-full border border-gray-300 rounded-md px-3 py-2 focus:outline-none focus:ring-2 focus:ring-gray-900 focus:border-transparent text-black"
                 />
               </div>
               <div>
                 <label htmlFor="email" className="block text-sm font-medium text-gray-700 mb-2">
                   Email Address
-                </label>
-                <input
+                </label>                <input
                   type="email"
                   id="email"
                   value={searchEmail}
                   onChange={(e) => setSearchEmail(e.target.value)}
                   placeholder="your@email.com"
-                  className="w-full border border-gray-300 rounded-md px-3 py-2 focus:outline-none focus:ring-2 focus:ring-gray-900 focus:border-transparent"
+                  className="w-full border border-gray-300 rounded-md px-3 py-2 focus:outline-none focus:ring-2 focus:ring-gray-900 focus:border-transparent text-black"
                 />
               </div>
             </div>

@@ -1,8 +1,7 @@
 // src/utils/cartWishlist.ts
 
 export function getCart() {
-  if (typeof window === 'undefined') return [];
-  return JSON.parse(localStorage.getItem('cart') || '[]');
+  if (typeof window === 'undefined') return [];  return JSON.parse(localStorage.getItem('cart') || '[]');
 }
 
 export function addToCart(productId: string) {
@@ -10,9 +9,10 @@ export function addToCart(productId: string) {
   if (!cart.includes(productId)) {
     cart.push(productId);
     localStorage.setItem('cart', JSON.stringify(cart));
-    // Immediately dispatch event to update navbar
+    // Immediately dispatch event to update navbar and floating cart
     if (typeof window !== 'undefined') {
       window.dispatchEvent(new Event('cartWishlistUpdate'));
+      window.dispatchEvent(new Event('cartUpdated'));
     }
   }
 }
@@ -20,9 +20,10 @@ export function addToCart(productId: string) {
 export function removeFromCart(productId: string) {
   const cart = getCart().filter((id: string) => id !== productId);
   localStorage.setItem('cart', JSON.stringify(cart));
-  // Immediately dispatch event to update navbar
+  // Immediately dispatch event to update navbar and floating cart
   if (typeof window !== 'undefined') {
     window.dispatchEvent(new Event('cartWishlistUpdate'));
+    window.dispatchEvent(new Event('cartUpdated'));
   }
 }
 

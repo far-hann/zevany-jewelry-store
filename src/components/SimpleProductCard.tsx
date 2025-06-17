@@ -1,13 +1,13 @@
-import { Heart, ShoppingBag, Eye } from 'lucide-react'
+import { Heart } from 'lucide-react'
 import Image from 'next/image'
-import { useState } from 'react'
+import { useState, useEffect } from 'react'
 import { useRouter } from 'next/navigation'
 import {
-  addToCart,
   addToWishlist,
   removeFromWishlist,
   getWishlist
 } from '../utils/cartWishlist'
+import ClientOnly from './ClientOnly'
 
 interface ProductCardProps {
   id: string | number
@@ -19,7 +19,6 @@ interface ProductCardProps {
   category?: string
   colors?: number
   isNew?: boolean
-  delay?: number
   specifications?: Record<string, string | undefined>
 }
 
@@ -34,25 +33,18 @@ export function SimpleProductCard({
   colors,
   isNew = false
 }: ProductCardProps) {
-  const [isHovered, setIsHovered] = useState(false)
-  const [isWishlisted, setIsWishlisted] = useState(() => {
-    if (typeof window !== 'undefined') {
-      return getWishlist().includes(String(id));
-    }
-    return false;
-  });
+  const [isWishlisted, setIsWishlisted] = useState(false);
 
   const router = useRouter()
-  
-  const handleCardClick = (e: React.MouseEvent) => {
-    e.preventDefault()
-    router.push(`/product/${id}`)
-  }
-
-  const handleAddToCart = (e: React.MouseEvent) => {
-    e.preventDefault()
-    e.stopPropagation()
-    addToCart(String(id))
+    // Initialize wishlist status on client side only
+  useEffect(() => {
+    if (typeof window !== 'undefined') {
+      setIsWishlisted(getWishlist().includes(String(id)));
+    }
+  }, [id]);
+    const handleCardClick = (e: React.MouseEvent) => {
+    e.preventDefault();
+    router.push(`/product/${id}`);
   }
 
   const handleToggleWishlist = (e: React.MouseEvent) => {
@@ -70,114 +62,69 @@ export function SimpleProductCard({
     if (typeof price === 'string') return price
     return `₹${price.toLocaleString()}`
   }
-
-  return (
-    <div
-      className="group relative bg-white rounded-2xl shadow-sm hover:shadow-lg transition-shadow duration-200 overflow-hidden cursor-pointer border border-gray-100"
-      onMouseEnter={() => setIsHovered(true)}
-      onMouseLeave={() => setIsHovered(false)}
+  return (      <div
+      className="group relative bg-white rounded-2xl shadow-sm overflow-hidden cursor-pointer border border-gray-100 hover:shadow-2xl transition-all duration-500 hover:scale-[1.03] hover:-translate-y-2 hover:border-amber-200 hover:bg-gradient-to-br hover:from-white hover:to-amber-50/30"
       onClick={handleCardClick}
-    >
-      {/* Product Image Container */}
-      <div className="relative aspect-square overflow-hidden bg-gray-50 rounded-t-2xl">
+    >      {/* Product Image Container */}
+      <div className="relative aspect-square overflow-hidden bg-gray-50 rounded-t-2xl group-hover:bg-gradient-to-br group-hover:from-amber-50 group-hover:to-amber-100/50 transition-all duration-500">
         <Image
           src={image}
           alt={alt || name}
           fill
-          className="object-cover group-hover:scale-105 transition-transform duration-300"
+          className="object-cover transition-all duration-500 group-hover:scale-110 group-hover:brightness-110"
           sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"
           priority={false}
           loading="lazy"
-        />
-
-        {/* Colors indicator */}
+        />{/* Colors indicator */}
         {colors && (
           <div className="absolute top-3 right-3 bg-white/95 backdrop-blur-sm px-3 py-1 rounded-full shadow-lg">
             <span className="text-xs text-gray-700 font-semibold">{colors} Colors</span>
           </div>
         )}
 
-        {/* Wishlist button */}
-        <button
-          onClick={handleToggleWishlist}
-          className="absolute top-3 left-3 p-2 bg-white/95 backdrop-blur-sm rounded-full hover:bg-white transition-colors duration-200 shadow-lg z-10"
-        >
-          <Heart 
-            className={`h-4 w-4 transition-colors duration-200 ${
-              isWishlisted 
-                ? 'text-red-500 fill-red-500' 
-                : 'text-gray-600 hover:text-red-500'
-            }`} 
-          />
-        </button>
-
-        {/* Simple overlay with actions on hover */}
-        {isHovered && (
-          <div className="absolute inset-0 bg-black/30 flex items-center justify-center transition-opacity duration-200">
-            <div className="flex space-x-4">
-              <button
-                onClick={(e) => {
-                  e.stopPropagation()
-                  router.push(`/product/${id}`)
-                }}
-                className="p-3 bg-white/90 rounded-full text-gray-900 hover:bg-white transition-colors duration-200"
-              >
-                <Eye className="h-5 w-5" />
-              </button>
-              
-              <button
-                onClick={handleAddToCart}
-                className="p-3 bg-amber-600 rounded-full text-white hover:bg-amber-700 transition-colors duration-200"
-              >
-                <ShoppingBag className="h-5 w-5" />
-              </button>
-            </div>
-          </div>
-        )}
-
-        {/* New Badge */}
+        {/* New Badge - positioned below colors if both exist */}
         {isNew && (
-          <div className="absolute top-3 right-3 bg-amber-600 text-white text-xs font-medium px-2 py-1 rounded-full">
+          <div className={`absolute ${colors ? 'top-12' : 'top-3'} right-3 bg-amber-600 text-white text-xs font-medium px-2 py-1 rounded-full`}>
             NEW
           </div>
-        )}
-      </div>
-
-      {/* Product Info */}
-      <div className="p-6">
+        )}        {/* Wishlist button */}
+        <ClientOnly>
+          <button
+            onClick={handleToggleWishlist}
+            className="absolute top-3 left-3 p-2 bg-white/95 backdrop-blur-sm rounded-full shadow-lg z-10 hover:bg-white active:scale-95 hover:shadow-xl transition-all duration-300 group-hover:scale-110 group-hover:shadow-2xl"
+            aria-label="Add to wishlist"
+          >
+            <Heart 
+              className={`h-5 w-5 transition-all duration-300 ${
+                isWishlisted 
+                  ? 'text-red-500 fill-red-500' 
+                  : 'text-gray-600 group-hover:text-amber-600'
+              }`}
+            />
+          </button>        </ClientOnly>
+      </div>      {/* Product Info */}
+      <div className="p-6 transition-all duration-500 group-hover:bg-gradient-to-br group-hover:from-white group-hover:to-amber-50/20">
         {category && (
-          <p className="text-sm text-amber-600 font-medium mb-2 uppercase tracking-wide">
+          <p className="text-sm text-amber-600 font-medium mb-2 uppercase tracking-wide transition-all duration-300 group-hover:text-amber-700 group-hover:font-semibold">
             {category}
           </p>
         )}
-        
-        <h3 className="text-lg font-medium text-gray-900 mb-3 group-hover:text-amber-600 transition-colors duration-200 font-serif">
+          <h3 className="text-lg font-medium text-gray-900 mb-3 font-serif transition-all duration-300 group-hover:text-gray-800 group-hover:font-semibold">
           {name}
         </h3>
 
         {description && (
-          <p className="text-gray-600 text-sm mb-3 leading-relaxed font-light">
+          <p className="text-gray-600 text-sm mb-3 leading-relaxed font-light transition-all duration-300 group-hover:text-gray-700">
             {description}
           </p>
-        )}
-        
-        <div className="flex items-center justify-between">
+        )}        <div className="text-center">
           <div>
-            <span className="text-xl font-semibold text-gray-900 font-serif">
+            <span className="text-xl font-semibold text-gray-900 font-serif transition-all duration-300 group-hover:text-amber-800 group-hover:font-bold">
               {formatPrice(price)}
             </span>
-            <div className="text-xs text-gray-500 mt-1 font-light tracking-wide">
-              MRP (incl. of all taxes)
+            <div className="text-xs text-gray-500 mt-1 font-light tracking-wide transition-all duration-300 group-hover:text-gray-600">              MRP (incl. of all taxes)
             </div>
           </div>
-          
-          <button
-            onClick={handleAddToCart}
-            className="px-4 py-2 bg-gray-900 text-white text-sm font-medium rounded-full hover:bg-amber-600 transition-colors duration-200 flex items-center gap-2"
-          >
-            <ShoppingBag className="h-4 w-4" />
-            Add to Cart
-          </button>
         </div>
       </div>
     </div>

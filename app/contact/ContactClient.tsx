@@ -132,29 +132,27 @@ export default function ContactClient() {
                 <div>
                   <label htmlFor="name" className="block text-sm font-medium text-gray-700 mb-2 font-serif">
                     Name *
-                  </label>
-                  <input
+                  </label>                  <input
                     type="text"
                     id="name"
                     name="name"
                     required
                     value={formData.name}
                     onChange={handleChange}
-                    className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-gray-500 focus:border-transparent"
+                    className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-gray-500 focus:border-transparent text-black"
                   />
                 </div>
                 <div>
                   <label htmlFor="email" className="block text-sm font-medium text-gray-700 mb-2 font-serif">
                     Email *
-                  </label>
-                  <input
+                  </label>                  <input
                     type="email"
                     id="email"
                     name="email"
                     required
                     value={formData.email}
                     onChange={handleChange}
-                    className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-gray-500 focus:border-transparent"
+                    className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-gray-500 focus:border-transparent text-black"
                   />
                 </div>
               </div>
@@ -162,14 +160,13 @@ export default function ContactClient() {
               <div>
                 <label htmlFor="subject" className="block text-sm font-medium text-gray-700 mb-2 font-serif">
                   Subject *
-                </label>
-                <select
+                </label>                <select
                   id="subject"
                   name="subject"
                   required
                   value={formData.subject}
                   onChange={handleChange}
-                  className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-gray-500 focus:border-transparent"
+                  className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-gray-500 focus:border-transparent text-black"
                 >
                   <option value="">Select a subject</option>
                   <option value="general">General Inquiry</option>
@@ -184,15 +181,14 @@ export default function ContactClient() {
               <div>
                 <label htmlFor="message" className="block text-sm font-medium text-gray-700 mb-2 font-serif">
                   Message *
-                </label>
-                <textarea
+                </label>                <textarea
                   id="message"
                   name="message"
                   required
                   rows={6}
                   value={formData.message}
                   onChange={handleChange}
-                  className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-gray-500 focus:border-transparent resize-none"
+                  className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-gray-500 focus:border-transparent resize-none text-black"
                   placeholder="Tell us how we can help you..."
                 />
               </div>

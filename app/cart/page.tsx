@@ -23,11 +23,23 @@ export default function Cart() {
   const [giftPackaging, setGiftPackaging] = useState(false)
   const [giftNote, setGiftNote] = useState('')
   const [isLoading, setIsLoading] = useState(false)
-
+  const [promoCode, setPromoCode] = useState('')
+  const [appliedPromo, setAppliedPromo] = useState<{code: string, discount: number} | null>(null)
+  const [promoError, setPromoError] = useState('')
   useEffect(() => {
     try {
       // Get cart from localStorage and convert to CartItem format
       const storedCart = JSON.parse(localStorage.getItem('cart') || '[]')
+      
+      // Load promo code data
+      const storedPromo = localStorage.getItem('appliedPromo')
+      if (storedPromo) {
+        try {
+          setAppliedPromo(JSON.parse(storedPromo))
+        } catch (e) {
+          console.error('Error loading promo data:', e)
+        }
+      }
       
       // If it's just an array of IDs, convert it to full cart items
       if (storedCart.length > 0 && typeof storedCart[0] === 'string') {
@@ -98,22 +110,50 @@ export default function Cart() {
     )
     updateCart(updatedCart)
   }, [cartItems, updateCart])
-
   const handleColorChange = useCallback((productId: string, color: string) => {
     const updatedCart = cartItems.map(item =>
       item.id === productId ? { ...item, color } : item
     )
     updateCart(updatedCart)
   }, [cartItems, updateCart])
-  // Memoize expensive calculations
-  const { subtotal, giftPackagingFee, total } = useMemo(() => {
+  const handlePromoCode = useCallback(() => {
+    setPromoError('')
+    
+    if (!promoCode.trim()) {
+      setPromoError('Please enter a promo code')
+      return
+    }
+    
+    const code = promoCode.trim().toUpperCase()
+    
+    if (code === 'ZEVANYNEW') {
+      const promoData = { code: 'ZEVANYNEW', discount: 0.05 }
+      setAppliedPromo(promoData) // 5% discount
+      localStorage.setItem('appliedPromo', JSON.stringify(promoData))
+      setPromoError('')
+      setPromoCode('')
+    } else {
+      setPromoError('Invalid promo code')
+      setAppliedPromo(null)
+      localStorage.removeItem('appliedPromo')
+    }
+  }, [promoCode])
+
+  const handleRemovePromo = useCallback(() => {
+    setAppliedPromo(null)
+    setPromoCode('')
+    setPromoError('')
+    localStorage.removeItem('appliedPromo')
+  }, [])// Memoize expensive calculations
+  const { subtotal, giftPackagingFee, promoDiscount, total } = useMemo(() => {
     const subtotal = cartItems.reduce((sum, item) => sum + (item.price * item.quantity), 0)
     const shipping = 0 // Free shipping
     const giftPackagingFee = giftPackaging ? 5 : 0
-    const total = subtotal + shipping + giftPackagingFee
+    const promoDiscount = appliedPromo ? subtotal * appliedPromo.discount : 0
+    const total = subtotal + shipping + giftPackagingFee - promoDiscount
     
-    return { subtotal, giftPackagingFee, total }
-  }, [cartItems, giftPackaging])
+    return { subtotal, giftPackagingFee, promoDiscount, total }
+  }, [cartItems, giftPackaging, appliedPromo])
   return (
     <div className="min-h-screen" style={{ background: '#f5f3ea' }}>
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
@@ -135,11 +175,12 @@ export default function Cart() {
             </Link>
           </div>
         ) : (
-          <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
-            {/* Cart Items */}
-            <div className="lg:col-span-2 space-y-6">
-              {cartItems.map((item, idx) => (
-                <div key={`${item.id || idx}-${item.size || ''}-${item.color || ''}`} className="bg-white rounded-lg shadow-sm border border-gray-200 p-6">
+          <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">            {/* Cart Items */}            <div className="lg:col-span-2 space-y-6">
+              {cartItems.map((item, idx) => {
+                // Create a stable unique key using index and item properties
+                const uniqueKey = `cart-${idx}-${item.id}-${item.size || 'nosize'}-${item.color || 'nocolor'}`;
+                return (
+                <div key={uniqueKey} className="bg-white rounded-lg shadow-sm border border-gray-200 p-6">
                   <div className="flex items-start space-x-4">                    <div className="relative w-32 h-32 bg-gray-100 rounded-lg overflow-hidden flex-shrink-0">
                       {item.image && item.image.trim() ? (
                         <Image
@@ -183,11 +224,10 @@ export default function Cart() {
                       {/* Size and Color Options */}
                       <div className="mt-4 grid grid-cols-1 sm:grid-cols-2 gap-4">
                         <div>
-                          <label className="block text-sm font-medium text-gray-700 mb-1 font-serif">Size</label>
-                          <select
+                          <label className="block text-sm font-medium text-gray-700 mb-1 font-serif">Size</label>                          <select
                             value={item.size || ''}
                             onChange={(e) => handleSizeChange(item.id, e.target.value)}
-                            className="w-full border border-gray-300 rounded-md px-3 py-2 text-sm font-serif focus:outline-none focus:ring-2 focus:ring-gray-900"
+                            className="w-full border border-gray-300 rounded-md px-3 py-2 text-sm font-serif focus:outline-none focus:ring-2 focus:ring-gray-900 text-black"
                           >
                             <option value="">Select Size</option>
                             <option value="XS">XS</option>
@@ -199,17 +239,17 @@ export default function Cart() {
                         </div>
                         
                         <div>
-                          <label className="block text-sm font-medium text-gray-700 mb-1 font-serif">Color</label>
-                          <select
+                          <label className="block text-sm font-medium text-gray-700 mb-1 font-serif">Color</label>                          <select
                             value={item.color || ''}
                             onChange={(e) => handleColorChange(item.id, e.target.value)}
-                            className="w-full border border-gray-300 rounded-md px-3 py-2 text-sm font-serif focus:outline-none focus:ring-2 focus:ring-gray-900"
+                            className="w-full border border-gray-300 rounded-md px-3 py-2 text-sm font-serif focus:outline-none focus:ring-2 focus:ring-gray-900 text-black"
                           >
                             <option value="">Select Color</option>
                             <option value="Gold">Gold</option>
                             <option value="Silver">Silver</option>
                             <option value="Rose Gold">Rose Gold</option>
                             <option value="White Gold">White Gold</option>
+                            <option value="Black">Black</option>
                           </select>
                         </div>
                       </div>
@@ -243,11 +283,11 @@ export default function Cart() {
                             ${(item.price * item.quantity).toFixed(2)}
                           </p>
                         </div>
-                      </div>
-                    </div>
+                      </div>                    </div>
                   </div>
                 </div>
-              ))}
+                );
+              })}
               
               {/* Gift Options */}
               <div className="bg-white rounded-lg shadow-sm border border-gray-200 p-6">
@@ -276,13 +316,12 @@ export default function Cart() {
                   <div>
                     <label className="block text-sm font-medium text-gray-700 mb-2 font-serif">
                       Gift Note (Optional)
-                    </label>
-                    <textarea
+                    </label>                    <textarea
                       value={giftNote}
                       onChange={(e) => setGiftNote(e.target.value)}
                       placeholder="Add a personal message for your gift recipient..."
                       rows={3}
-                      className="w-full border border-gray-300 rounded-md px-3 py-2 text-sm font-serif focus:outline-none focus:ring-2 focus:ring-gray-900 resize-none"
+                      className="w-full border border-gray-300 rounded-md px-3 py-2 text-sm font-serif focus:outline-none focus:ring-2 focus:ring-gray-900 resize-none text-black"
                     />
                   </div>
                 </div>
@@ -294,7 +333,7 @@ export default function Cart() {
               <div className="bg-white rounded-lg shadow-sm border border-gray-200 p-6 sticky top-6">
                 <h2 className="text-lg font-medium text-gray-900 mb-6 font-serif">Order Summary</h2>
                 
-                <div className="space-y-3 mb-6">
+                <div className="space-y-3 mb-6 text-black">
                   <div className="flex justify-between text-sm font-serif">
                     <span className="text-gray-600">Subtotal ({cartItems.reduce((sum, item) => sum + item.quantity, 0)} items)</span>
                     <span className="text-gray-900">${subtotal.toFixed(2)}</span>
@@ -304,19 +343,61 @@ export default function Cart() {
                     <span className="text-gray-600">Shipping</span>
                     <span className="text-green-600 font-medium">Free</span>
                   </div>
-                  
                   {giftPackaging && (
                     <div className="flex justify-between text-sm font-serif">
                       <span className="text-gray-600">Gift packaging</span>
                       <span className="text-gray-900">${giftPackagingFee.toFixed(2)}</span>
                     </div>
                   )}
-                  
+                  {appliedPromo && (
+                    <div className="flex justify-between text-sm font-serif">
+                      <div className="flex items-center">
+                        <span className="text-green-600">Promo ({appliedPromo.code})</span>
+                        <button
+                          onClick={handleRemovePromo}
+                          className="ml-2 text-xs text-gray-400 hover:text-red-500"
+                        >
+                          Remove
+                        </button>
+                      </div>
+                      <span className="text-green-600">-${promoDiscount.toFixed(2)}</span>
+                    </div>
+                  )}
                   <div className="border-t border-gray-200 pt-3">
                     <div className="flex justify-between text-lg font-medium font-serif">
                       <span className="text-gray-900">Total</span>
                       <span className="text-gray-900">${total.toFixed(2)}</span>
+                    </div>                  </div>
+                </div>
+                
+                {/* Promo Code Section */}
+                <div className="mb-6">
+                  <div className="border-t border-gray-200 pt-4">
+                    <h3 className="text-sm font-medium text-gray-900 mb-3 font-serif">Promo Code</h3>
+                    <div className="flex flex-col sm:flex-row space-y-2 sm:space-y-0 sm:space-x-2">
+                      <input
+                        type="text"
+                        value={promoCode}
+                        onChange={(e) => setPromoCode(e.target.value)}
+                        placeholder="Enter promo code"
+                        className="flex-1 px-3 py-2 border border-gray-300 rounded-md text-sm font-serif focus:outline-none focus:ring-2 focus:ring-gray-900"
+                        onKeyPress={(e) => e.key === 'Enter' && handlePromoCode()}
+                      />
+                      <button
+                        onClick={handlePromoCode}
+                        className="px-4 py-2 bg-gray-900 text-white text-sm font-serif rounded-md hover:bg-gray-800 transition-colors sm:whitespace-nowrap"
+                      >
+                        Apply
+                      </button>
                     </div>
+                    {promoError && (
+                      <p className="text-red-500 text-xs mt-2 font-serif">{promoError}</p>
+                    )}
+                    {appliedPromo && (
+                      <p className="text-green-600 text-xs mt-2 font-serif">
+                        ✓ Promo code {appliedPromo.code} applied ({Math.round(appliedPromo.discount * 100)}% off)
+                      </p>
+                    )}
                   </div>
                 </div>
                 

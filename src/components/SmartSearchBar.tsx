@@ -115,15 +115,14 @@ export default function SmartSearchBar() {
     <div className="relative">
       {/* Main Search Bar */}
       <div className="relative">
-        <Search className="absolute left-4 top-1/2 transform -translate-y-1/2 h-5 w-5 text-gray-400" />
-        <input
+        <Search className="absolute left-4 top-1/2 transform -translate-y-1/2 h-5 w-5 text-gray-400" />        <input
           type="text"
           value={query}
           onChange={(e) => setQuery(e.target.value)}
           onKeyDown={handleKeyDown}
           onFocus={() => setShowSuggestions(query.length > 1)}
           placeholder="Search jewelry... (e.g., diamond rings, gold necklaces)"
-          className="w-full pl-12 pr-20 py-4 border border-gray-300 rounded-xl focus:outline-none focus:ring-2 focus:ring-gray-900 focus:border-transparent text-lg shadow-sm"
+          className="w-full pl-12 pr-20 py-4 border border-gray-300 rounded-xl focus:outline-none focus:ring-2 focus:ring-gray-900 focus:border-transparent text-lg shadow-sm text-black"
         />
         <button
           onClick={() => handleSearch()}

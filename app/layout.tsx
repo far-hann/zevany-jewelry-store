@@ -44,10 +44,11 @@ export default function RootLayout({
     <html lang="en">
       <body className={`${inter.variable} ${cormorantGaramond.variable} antialiased font-sans bg-white`}>
         <Navbar />
-        <main>
+        <main className="pb-20 lg:pb-0">
           {children}
         </main>
         <SimpleFooter />
+        {/* Mobile components temporarily disabled */}
       </body>
     </html>
   );

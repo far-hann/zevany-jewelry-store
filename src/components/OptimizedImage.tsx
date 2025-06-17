@@ -116,7 +116,7 @@ export function OptimizedImage({
   }  const imageProps = {
     src: imageSrc,
     alt,
-    className: `transition-opacity duration-300 ${isLoaded ? 'opacity-100' : 'opacity-0'} ${className}`,
+    className: `${isLoaded ? 'opacity-100' : 'opacity-100'} ${className}`,
     priority,
     quality,
     onLoad: handleLoad,

@@ -17,20 +17,33 @@ type CartItem = {
   collection?: string;
 };
 
-export default function CheckoutPage() {  const [cart, setCart] = useState<CartItem[]>([]);
+export default function CheckoutPage() {  
+  const [cart, setCart] = useState<CartItem[]>([]);
   const [giftPackaging, setGiftPackaging] = useState(false);
   const [giftNote, setGiftNote] = useState("");
   const [customerEmail, setCustomerEmail] = useState("");
   const [loading, setLoading] = useState(false);
   const [paypalLoaded, setPaypalLoaded] = useState(false);
+  const [promoCode, setPromoCode] = useState('');
+  const [appliedPromo, setAppliedPromo] = useState<{code: string, discount: number} | null>(null);
+  const [promoError, setPromoError] = useState('');
   
   // Validation State
   const [errors, setErrors] = useState<{ [key: string]: string }>({});
   const [success, setSuccess] = useState<string | null>(null);
-
   useEffect(() => {
     const storedCart = JSON.parse(localStorage.getItem("cart") || "[]");
     setCart(storedCart);
+    
+    // Load promo code data
+    const storedPromo = localStorage.getItem('appliedPromo');
+    if (storedPromo) {
+      try {
+        setAppliedPromo(JSON.parse(storedPromo));
+      } catch (e) {
+        console.error('Error loading promo data:', e);
+      }
+    }
   }, []);
 
   // Load PayPal SDK
@@ -57,13 +70,12 @@ export default function CheckoutPage() {  const [cart, setCart] = useState<CartI
       document.body.appendChild(script);
     }
   }, [cart, paypalLoaded]);
-
   // Calculate totals
   const subtotal = cart.reduce((sum, item) => sum + item.price * item.quantity, 0);
   const shippingFee = 15.00; // Standard shipping
   const giftPackagingFee = giftPackaging ? 5.00 : 0;
-  const total = subtotal + shippingFee + giftPackagingFee;
-  // Validate minimal form
+  const promoDiscount = appliedPromo ? subtotal * appliedPromo.discount : 0;
+  const total = subtotal + shippingFee + giftPackagingFee - promoDiscount;  // Validate minimal form
   const validate = useCallback((requireEmail = true) => {
     const newErrors: { [key: string]: string } = {};
     
@@ -74,6 +86,35 @@ export default function CheckoutPage() {  const [cart, setCart] = useState<CartI
     setErrors(newErrors);
     return Object.keys(newErrors).length === 0;
   }, [customerEmail]);
+  const handlePromoCode = useCallback(() => {
+    setPromoError('')
+    
+    if (!promoCode.trim()) {
+      setPromoError('Please enter a promo code')
+      return
+    }
+    
+    const code = promoCode.trim().toUpperCase()
+    
+    if (code === 'ZEVANYNEW') {
+      const promoData = { code: 'ZEVANYNEW', discount: 0.05 }
+      setAppliedPromo(promoData) // 5% discount
+      localStorage.setItem('appliedPromo', JSON.stringify(promoData))
+      setPromoError('')
+      setPromoCode('')
+    } else {
+      setPromoError('Invalid promo code')
+      setAppliedPromo(null)
+      localStorage.removeItem('appliedPromo')
+    }
+  }, [promoCode]);
+
+  const handleRemovePromo = useCallback(() => {
+    setAppliedPromo(null)
+    setPromoCode('')
+    setPromoError('')
+    localStorage.removeItem('appliedPromo')
+  }, []);
   const handlePayPalSuccess = useCallback(async (paymentDetails: PayPalCaptureResult) => {
     setLoading(true);
     
@@ -107,12 +148,13 @@ export default function CheckoutPage() {  const [cart, setCart] = useState<CartI
           state: shippingInfo?.address.admin_area_1 || '',
           zipCode: shippingInfo?.address.postal_code || '',
           phone: '', // PayPal doesn't always provide phone
-        },
-        orderItems,
+        },        orderItems,
         giftPackaging,
         giftNote: giftNote.trim() || undefined,
         shippingPrice: shippingFee,
         giftPackagingFee,
+        promoCode: appliedPromo?.code,
+        promoDiscount: promoDiscount,
         totalPrice: total,
         paymentMethod: 'paypal',
         paymentDetails: {
@@ -132,10 +174,10 @@ export default function CheckoutPage() {  const [cart, setCart] = useState<CartI
       setLoading(false);
       
       if (res.ok) {
-        const result = await res.json();
-        setSuccess(`✅ Payment successful! Your order #${result.data.orderNumber} has been placed. You will receive a confirmation email shortly. Thank you for shopping with ZEVANY!`);
+        const result = await res.json();        setSuccess(`✅ Payment successful! Your order #${result.data.orderNumber} has been placed. You will receive a confirmation email shortly. Thank you for shopping with ZEVANY!`);
         setErrors({});
         localStorage.removeItem('cart');
+        localStorage.removeItem('appliedPromo');
         
         // Redirect after 5 seconds
         setTimeout(() => { 
@@ -149,7 +191,7 @@ export default function CheckoutPage() {  const [cart, setCart] = useState<CartI
       setLoading(false);      console.error('Order processing error:', error);
       setErrors({ general: "Order failed! Please check your connection and try again." });
     }
-  }, [cart, customerEmail, giftPackaging, giftNote, shippingFee, giftPackagingFee, total]);
+  }, [cart, customerEmail, giftPackaging, giftNote, shippingFee, giftPackagingFee, appliedPromo, promoDiscount, total]);
 
   // Initialize PayPal buttons
   useEffect(() => {
@@ -370,10 +412,9 @@ export default function CheckoutPage() {  const [cart, setCart] = useState<CartI
                 <Package2 className="h-5 w-5 text-gray-600 mr-2" />
                 <h2 className="text-lg font-medium text-gray-900 font-serif">Your Order</h2>
               </div>
-              
-              <div className="space-y-4">
-                {cart.map((item) => (
-                  <div key={`${item.id}-${item.size}-${item.color}`} className="flex items-center space-x-4 py-3 border-b border-gray-200 last:border-b-0">
+                <div className="space-y-4">
+                {cart.map((item, idx) => (
+                  <div key={`checkout-${idx}-${item.id}-${item.size || 'nosize'}-${item.color || 'nocolor'}`} className="flex items-center space-x-4 py-3 border-b border-gray-200 last:border-b-0">
                     <div className="relative h-16 w-16 rounded-lg overflow-hidden bg-gray-100">
                       <Image
                         src={item.image}
@@ -408,19 +449,59 @@ export default function CheckoutPage() {  const [cart, setCart] = useState<CartI
                   <div className="flex justify-between text-sm text-gray-600 font-serif">
                     <span>Shipping</span>
                     <span>${shippingFee.toFixed(2)}</span>
-                  </div>
-                  {giftPackaging && (
+                  </div>                  {giftPackaging && (
                     <div className="flex justify-between text-sm text-gray-600 font-serif">
                       <span>Gift Packaging</span>
                       <span>${giftPackagingFee.toFixed(2)}</span>
                     </div>
                   )}
-                  <div className="flex justify-between text-lg font-medium text-gray-900 pt-2 border-t border-gray-200 font-serif">
+                  {appliedPromo && (
+                    <div className="flex justify-between text-sm font-serif">
+                      <div className="flex items-center">
+                        <span className="text-green-600">Promo ({appliedPromo.code})</span>
+                        <button
+                          onClick={handleRemovePromo}
+                          className="ml-2 text-xs text-gray-400 hover:text-red-500"
+                        >
+                          Remove
+                        </button>
+                      </div>
+                      <span className="text-green-600">-${promoDiscount.toFixed(2)}</span>
+                    </div>
+                  )}                  <div className="flex justify-between text-lg font-medium text-gray-900 pt-2 border-t border-gray-200 font-serif">
                     <span>Total</span>
                     <span>${total.toFixed(2)}</span>
                   </div>
                 </div>
               </div>
+            </div>
+              {/* Promo Code Section */}
+            <div className="bg-white rounded-lg shadow-sm border border-gray-200 p-6">
+              <h3 className="text-lg font-medium text-gray-900 mb-4 font-serif">Promo Code</h3>
+              <div className="flex flex-col sm:flex-row space-y-2 sm:space-y-0 sm:space-x-2">
+                <input
+                  type="text"
+                  value={promoCode}
+                  onChange={(e) => setPromoCode(e.target.value)}
+                  placeholder="Enter promo code"
+                  className="flex-1 px-3 py-2 border border-gray-300 rounded-md text-sm font-serif focus:outline-none focus:ring-2 focus:ring-gray-900"
+                  onKeyPress={(e) => e.key === 'Enter' && handlePromoCode()}
+                />
+                <button
+                  onClick={handlePromoCode}
+                  className="px-4 py-2 bg-gray-900 text-white text-sm font-serif rounded-md hover:bg-gray-800 transition-colors sm:whitespace-nowrap"
+                >
+                  Apply
+                </button>
+              </div>
+              {promoError && (
+                <p className="text-red-500 text-xs mt-2 font-serif">{promoError}</p>
+              )}
+              {appliedPromo && (
+                <p className="text-green-600 text-xs mt-2 font-serif">
+                  ✓ Promo code {appliedPromo.code} applied ({Math.round(appliedPromo.discount * 100)}% off)
+                </p>
+              )}
             </div>
             
             {/* Payment Section */}

@@ -4,20 +4,21 @@ import { User, Mail, Phone, MapPin, Calendar, Heart } from 'lucide-react'
 import { useSearchParams } from "next/navigation";
 import { Suspense } from "react";
 import Link from 'next/link';
+import MobilePageWrapper from '@/components/MobilePageWrapper';
 
 function AccountContent() {
   const searchParams = useSearchParams();
   const unauthorized = searchParams ? searchParams.get("unauthorized") : null;
 
   return (
-    <div className="min-h-screen" style={{ background: '#f5f3ea' }}>
+    <MobilePageWrapper title="My Account" showBackButton={true}>
       {unauthorized && (
-        <div className="bg-red-100 border border-red-400 text-red-700 px-4 py-3 rounded mb-6" role="alert">
+        <div className="bg-red-100 border border-red-400 text-red-700 px-4 py-3 rounded mb-6 mx-4" role="alert">
           <strong className="font-bold">Access Denied:</strong>
           <span className="block sm:inline ml-2">You must be an admin to access that page.</span>
         </div>
       )}
-      <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
+      <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 py-8 lg:py-12">
         <div className="text-center mb-12">
           <h1 className="text-4xl font-bold text-gray-900 mb-4">My Account</h1>
           <p className="text-xl text-gray-600">
@@ -110,13 +111,14 @@ function AccountContent() {
                   <h3 className="text-lg font-semibold ml-4">Appointments</h3>
                 </div>
                 <p className="text-gray-600 mb-4">Schedule consultations and jewelry services</p>
-                <button className="text-yellow-600 hover:text-yellow-800 font-medium">
-                  Book Appointment →
+                <button className="text-yellow-600 hover:text-yellow-800 font-medium">                  Book Appointment →
                 </button>
               </div>
-            </div>          </div>        </div>
+            </div>
+          </div>
+        </div>
       </div>
-    </div>
+    </MobilePageWrapper>
   )
 }
 

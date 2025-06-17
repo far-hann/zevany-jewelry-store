@@ -22,7 +22,7 @@ export const products = [
     },
     rating: 4.9,
     reviews: 89,
-    colors: ['clear', 'multicolor'],
+    colors: ['clear', 'multicolor', 'black'],
     inStock: true
   },
   {
@@ -114,7 +114,7 @@ export const products = [
     },
     rating: 4.5,
     reviews: 22,
-    colors: ['silver'],
+    colors: ['silver', 'black'],
     inStock: true
   },
   {
@@ -139,7 +139,7 @@ export const products = [
     },
     rating: 4.8,
     reviews: 124,
-    colors: ['green', 'blue', 'pink'],
+    colors: ['green', 'blue', 'pink', 'black'],
     inStock: true
   },
   {

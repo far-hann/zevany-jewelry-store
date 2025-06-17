@@ -5,28 +5,25 @@ import { Metadata } from 'next';
 import ProductActions from './ProductActions';
 import ProductGallery from './ProductGallery';
 import ProductTabs from './ProductTabs';
-
-interface Props {
-  params: Promise<{ id: string }>
-}
+import MobileProductPage from '@/components/MobileProductPage';
 
 // Generate metadata for SEO
-export async function generateMetadata({ params }: Props): Promise<Metadata> {
-  const { id } = await params
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
+export async function generateMetadata(props: any): Promise<Metadata> {
+  const { id } = props.params;
   const product = products.find(p => p.id === id)
-  
   if (!product) {
     return {
       title: 'Product Not Found | ZEVANY Luxury Jewelry',
       description: 'The requested product could not be found.',
     }
   }
-  
   return generateProductMetadata(product)
 }
 
-export default async function ProductPage({ params }: Props) {
-  const { id } = await params;
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
+export default function ProductPage(props: any) {
+  const { id } = props.params;
   const product = products.find((p) => p.id === id);
 
   if (!product) {
@@ -35,19 +32,20 @@ export default async function ProductPage({ params }: Props) {
         Product not found
       </div>
     );
-  }
-  return (
-    <div className="min-h-screen bg-white">
-      {product && (
-        <script
-          type="application/ld+json"
-          dangerouslySetInnerHTML={{
-            __html: JSON.stringify(generateProductJsonLd(product))
-          }}
-        />
-      )}
-      
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-16">
+  }  return (
+    <>
+      {/* Mobile View */}
+      <div className="lg:hidden">
+        <MobileProductPage product={product} />
+      </div>      {/* Desktop View */}
+      <div className="hidden lg:block min-h-screen bg-white">
+        {product && (
+          <>
+            {generateProductJsonLd(product)}
+          </>
+        )}
+        
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-16">
         <div className="lg:grid lg:grid-cols-2 lg:gap-x-8 lg:items-start">
           {/* Product Images */}
           <ProductGallery product={product} />
@@ -121,11 +119,10 @@ export default async function ProductPage({ params }: Props) {
               </div>
             </div>
           </div>
-        </div>
-
-        {/* Product Tabs */}
+        </div>        {/* Product Tabs */}
         <ProductTabs product={product} />
       </div>
     </div>
+    </>
   );
 }

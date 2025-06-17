@@ -5,18 +5,14 @@ import Link from 'next/link'
 import { ShoppingBag, Heart, Menu, X } from 'lucide-react'
 import { getCart, getWishlist } from '../utils/cartWishlist';
 import { AuthDropdown } from './AuthDropdown';
+import ClientOnly from './ClientOnly';
 
 export function Navbar() {
   const [cartCount, setCartCount] = useState(0)
   const [wishlistCount, setWishlistCount] = useState(0)
   const [user, setUser] = useState<{ firstName: string; lastName: string; email: string } | null>(null)
   const [isMenuOpen, setIsMenuOpen] = useState(false)
-  const [isClient, setIsClient] = useState(false)
-
-  useEffect(() => {
-    // Set client flag to prevent hydration mismatch
-    setIsClient(true)
-    
+  useEffect(() => {    
     function updateCounts() {
       if (typeof window !== 'undefined') {
         setCartCount(getCart().length)
@@ -96,50 +92,59 @@ export function Navbar() {
           <div className="hidden lg:flex items-center space-x-4 xl:space-x-6">
             <Link href="/wishlist" className="relative p-2 text-gray-900 hover:text-gray-700 transition-colors">
               <Heart className="h-6 w-6" />
-              {isClient && wishlistCount > 0 && (
-                <span className="absolute -top-1 -right-1 bg-gray-900 text-white text-xs rounded-full h-5 w-5 flex items-center justify-center font-sans font-bold">
-                  {wishlistCount}
-                </span>
-              )}
+              <ClientOnly>
+                {wishlistCount > 0 && (
+                  <span className="absolute -top-1 -right-1 bg-gray-900 text-white text-xs rounded-full h-5 w-5 flex items-center justify-center font-sans font-bold">
+                    {wishlistCount}
+                  </span>
+                )}
+              </ClientOnly>
             </Link>
             <Link href="/cart" className="relative p-2 text-gray-900 hover:text-gray-700 transition-colors">
               <ShoppingBag className="h-6 w-6" />
-              {isClient && cartCount > 0 && (
-                <span className="absolute -top-1 -right-1 bg-gray-900 text-white text-xs rounded-full h-5 w-5 flex items-center justify-center font-sans font-bold">
-                  {cartCount}
-                </span>
-              )}
+              <ClientOnly>
+                {cartCount > 0 && (
+                  <span className="absolute -top-1 -right-1 bg-gray-900 text-white text-xs rounded-full h-5 w-5 flex items-center justify-center font-sans font-bold">
+                    {cartCount}
+                  </span>
+                )}
+              </ClientOnly>
             </Link>
-            <AuthDropdown 
-              user={user}
-              onLogin={handleLogin}
-              onLogout={handleLogout}
-            />
+            <ClientOnly>
+              <AuthDropdown 
+                user={user}
+                onLogin={handleLogin}
+                onLogout={handleLogout}
+              />
+            </ClientOnly>
           </div>          {/* Mobile Icons (visible on tablet and mobile) */}
           <div className="flex lg:hidden items-center space-x-4">
             <Link href="/wishlist" className="relative p-2 text-gray-900 hover:text-gray-700 transition-colors">
               <Heart className="h-5 w-5" />
-              {isClient && wishlistCount > 0 && (
-                <span className="absolute -top-1 -right-1 bg-gray-900 text-white text-xs rounded-full h-4 w-4 flex items-center justify-center font-sans font-bold text-[10px]">
-                  {wishlistCount}
-                </span>
-              )}
+              <ClientOnly>
+                {wishlistCount > 0 && (
+                  <span className="absolute -top-1 -right-1 bg-gray-900 text-white text-xs rounded-full h-4 w-4 flex items-center justify-center font-sans font-bold text-[10px]">
+                    {wishlistCount}
+                  </span>
+                )}
+              </ClientOnly>
             </Link>
             <Link href="/cart" className="relative p-2 text-gray-900 hover:text-gray-700 transition-colors">
               <ShoppingBag className="h-5 w-5" />
-              {isClient && cartCount > 0 && (
-                <span className="absolute -top-1 -right-1 bg-gray-900 text-white text-xs rounded-full h-4 w-4 flex items-center justify-center font-sans font-bold text-[10px]">
-                  {cartCount}
-                </span>
-              )}
+              <ClientOnly>
+                {cartCount > 0 && (
+                  <span className="absolute -top-1 -right-1 bg-gray-900 text-white text-xs rounded-full h-4 w-4 flex items-center justify-center font-sans font-bold text-[10px]">
+                    {cartCount}
+                  </span>
+                )}
+              </ClientOnly>
             </Link>
           </div>
-        </div>
-
-        {/* Mobile Menu */}
-        {isMenuOpen && (
-          <div className="lg:hidden border-t border-gray-100">
-            <div className="px-2 pt-2 pb-3 space-y-1 bg-white">
+        </div>        {/* Mobile Menu */}
+        <ClientOnly>
+          {isMenuOpen && (
+            <div className="lg:hidden border-t border-gray-100">
+              <div className="px-2 pt-2 pb-3 space-y-1 bg-white">
               <Link 
                 href="/" 
                 className="block px-3 py-2 text-base font-medium text-gray-900 hover:text-gray-700 hover:bg-gray-50 rounded-md"
@@ -181,8 +186,7 @@ export function Navbar() {
                 onClick={() => setIsMenuOpen(false)}
               >
                 Earrings
-              </Link>
-              
+              </Link>              
               {/* Mobile Auth Section */}
               <div className="border-t border-gray-100 pt-3 mt-3">
                 <div className="px-3">
@@ -195,7 +199,8 @@ export function Navbar() {
               </div>
             </div>
           </div>
-        )}
+          )}
+        </ClientOnly>
       </div>
     </nav>
   )

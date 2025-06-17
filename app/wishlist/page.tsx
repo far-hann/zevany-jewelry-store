@@ -1,9 +1,9 @@
 'use client'
 
 import { useState, useEffect } from 'react'
-import { Heart, X, ShoppingBag } from 'lucide-react'
+import { Heart, X, Eye } from 'lucide-react'
 import { products } from '@/data/products'
-import { getWishlist, removeFromWishlist, addToCart } from '@/utils/cartWishlist'
+import { getWishlist, removeFromWishlist } from '@/utils/cartWishlist'
 import Link from 'next/link'
 import Image from 'next/image'
 
@@ -13,15 +13,9 @@ export default function Wishlist() {
   useEffect(() => {
     setWishlistItems(getWishlist())
   }, [])
-
   const handleRemoveFromWishlist = (productId: string) => {
     removeFromWishlist(productId)
     setWishlistItems(getWishlist())
-    window.dispatchEvent(new Event('cartWishlistUpdate'))
-  }
-
-  const handleAddToCart = (productId: string) => {
-    addToCart(productId)
     window.dispatchEvent(new Event('cartWishlistUpdate'))
   }
 
@@ -68,21 +62,20 @@ export default function Wishlist() {
                   >
                     <X className="h-4 w-4" />
                   </button>
-                </div>
-                <div className="p-6">
+                </div>                <div className="p-6">
                   <Link href={`/product/${product.id}`}>
                     <h3 className="text-lg font-medium text-gray-900 hover:text-gray-700 font-serif mb-2">{product.name}</h3>
                   </Link>
                   <p className="text-sm text-gray-600 font-serif mb-2">{product.collection}</p>
                   <p className="text-lg font-medium text-gray-900 mb-4 font-serif">{product.price}</p>
-                  <button
-                    onClick={() => handleAddToCart(product.id)}
+                  <Link
+                    href={`/product/${product.id}`}
                     className="w-full bg-gray-900 text-white py-2 px-4 rounded-lg hover:bg-gray-800 transition-colors flex items-center justify-center space-x-2 font-serif"
                   >
-                    <ShoppingBag className="h-4 w-4" />
-                    <span>Add to Cart</span>
-                  </button>
-                </div>              </div>
+                    <Eye className="h-4 w-4" />
+                    <span>View Details</span>
+                  </Link>
+                </div></div>
             ))}
           </div>        )}      </div>
     </div>

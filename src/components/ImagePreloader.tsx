@@ -1,7 +1,7 @@
 'use client'
 
 import { useEffect, useState } from 'react'
-import { products } from '@/data/products'
+import { products } from '../data/products'
 
 export function ImagePreloader() {
   const [preloadStatus, setPreloadStatus] = useState<'loading' | 'complete' | 'error'>('loading')

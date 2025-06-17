@@ -1,6 +1,6 @@
 "use client"
 
-import ProductCard from '@/components/SimpleProductCard'
+import { SimpleProductCard } from '@/components/SimpleProductCard'
 import { products } from '@/data/products'
 
 export default function Collections() {
@@ -18,7 +18,8 @@ export default function Collections() {
             Discover our curated collections of fine jewelry, each piece crafted with precision and passion.
           </p>
         </div>        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-10 lg:gap-14 px-2 md:px-0">
-          {featuredProducts.map((product) => (            <ProductCard
+          {featuredProducts.map((product) => (
+            <SimpleProductCard
               key={product.id}
               id={product.id}
               name={product.name}
@@ -31,7 +32,7 @@ export default function Collections() {
           ))}
         </div>
         <div className="flex justify-end mt-8">
-          <button className="bg-black text-white p-3 rounded-lg hover:bg-gray-800 transition-colors">
+          <button className="bg-black text-white p-3 rounded-lg hover:bg-gray-800">
             <svg
               className="w-6 h-6"
               fill="none"
