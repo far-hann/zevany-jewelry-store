@@ -1,17 +1,5 @@
 import { Metadata } from 'next'
-
-interface Product {
-  id: string
-  name: string
-  description: string
-  price: string
-  images: string[]
-  collection: string
-  specifications: Record<string, string | undefined>
-  rating?: number
-  reviews?: number
-  inStock?: boolean
-}
+import { Product } from '../../types/Product';
 
 interface SEOProps {
   title?: string
@@ -43,8 +31,8 @@ export function generateProductSchema(product: Product, baseUrl: string = 'https
       '@type': 'Offer',
       url: `${baseUrl}/product/${product.id}`,
       priceCurrency: 'USD',
-      price: product.price.replace('$', '').replace(',', ''),
-      availability: product.inStock ? 'https://schema.org/InStock' : 'https://schema.org/OutOfStock',
+      price: product.price.toString(),
+      availability: product.stock > 0 ? 'https://schema.org/InStock' : 'https://schema.org/OutOfStock',
       condition: 'https://schema.org/NewCondition',
       seller: {
         '@type': 'Organization',
@@ -59,7 +47,7 @@ export function generateProductSchema(product: Product, baseUrl: string = 'https
         bestRating: 5,
         worstRating: 1
       }
-    }),    additionalProperty: Object.entries(product.specifications)
+    }),    additionalProperty: Object.entries(product.details)
       .filter(([, value]) => value !== undefined)
       .map(([key, value]) => ({
         '@type': 'PropertyValue',
@@ -76,14 +64,10 @@ export function generateOrganizationSchema(baseUrl: string = 'https://zevany-sto
   return {
     '@context': 'https://schema.org',
     '@type': 'Organization',
-    name: 'ZEVANY Luxury Jewelry',
+    name: 'ZEVANY',
     url: baseUrl,
     logo: `${baseUrl}/images/brand/zevany-logo.svg`,
-    description: 'Premium luxury jewelry store offering exquisite rings, necklaces, earrings, and bracelets.',
-    address: {
-      '@type': 'PostalAddress',
-      addressCountry: 'US'
-    },
+    description: 'Exquisite, handcrafted jewelry made from pure silver and precious gemstones. Each piece comes with a certificate of authenticity. We offer express, secured shipping worldwide.',
     contactPoint: {
       '@type': 'ContactPoint',
       contactType: 'customer service',
@@ -102,9 +86,9 @@ export function generateWebsiteSchema(baseUrl: string = 'https://zevany-store.ve
   return {
     '@context': 'https://schema.org',
     '@type': 'WebSite',
-    name: 'ZEVANY Luxury Jewelry',
+    name: 'ZEVANY',
     url: baseUrl,
-    description: 'Discover exquisite luxury jewelry at ZEVANY. Premium rings, necklaces, earrings, and bracelets crafted with precision.',
+    description: 'Discover handcrafted jewelry from ZEVANY, made with pure silver and precious gemstones. Shop our collection of rings, necklaces, and more with a certificate of authenticity and worldwide shipping.',
     potentialAction: {
       '@type': 'SearchAction',
       target: `${baseUrl}/search?q={search_term_string}`,
@@ -129,133 +113,52 @@ export function generateBreadcrumbSchema(items: Array<{name: string, url: string
 
 // Generate Next.js metadata for pages
 export function generateMetadata({
-  title = 'ZEVANY - Luxury Jewelry Store | Premium Rings, Necklaces & More',
-  description = 'Discover exquisite luxury jewelry at ZEVANY. Shop premium rings, necklaces, earrings, and bracelets crafted with precision and elegance.',
-  keywords = ['luxury jewelry', 'premium rings', 'diamond necklaces', 'gold earrings', 'designer bracelets', 'fine jewelry'],
+  title = 'ZEVANY | Handcrafted Silver & Gemstone Jewelry | Worldwide Shipping',
+  description = 'Discover authentic, handcrafted jewelry from ZEVANY. Our pieces are made with pure silver and precious gemstones, and come with a certificate of authenticity. Enjoy express, secured shipping worldwide.',
+  keywords = ['handcrafted jewelry', 'pure silver', 'precious gemstones', 'authentic jewelry', 'international jewelry store', 'luxury rings', 'gemstone necklaces', 'silver bracelets', 'designer earrings'],
   canonical,
   ogImage = '/images/brand/zevany-logo.svg',
-  product
+  product,
+  noindex = false
 }: SEOProps): Metadata {
   const baseUrl = 'https://zevany-store.vercel.app'
   
   // If it's a product page, customize the meta
   if (product) {
-    title = `${product.name} | ZEVANY Luxury Jewelry`
-    description = `${product.description} - ${product.price}. Shop premium ${product.collection} collection at ZEVANY.`
-    keywords = [
-      ...keywords,
-      product.name.toLowerCase(),
-      product.collection.toLowerCase(),
-      'luxury jewelry',
-      'premium quality'
-    ]
-    ogImage = product.images[0] || ogImage
+    title = `${product.name} | ZEVANY - Handcrafted Silver & Gemstone Jewelry`
+    description = `Shop the ${product.name} by ZEVANY. This handcrafted piece is made from pure silver and features a stunning ${product.details.gemstone || 'gemstone'}. Includes a certificate of authenticity. Order now for express, secured delivery.`
+    keywords.push(...(product.tags || []))
+    ogImage = product.images?.[0] || ogImage
   }
-
-  return {
+  
+  const metadata: Metadata = {
     title,
     description,
-    keywords: keywords.join(', '),
-    authors: [{ name: 'ZEVANY Luxury Jewelry' }],
-    creator: 'ZEVANY',
-    publisher: 'ZEVANY',
-    robots: {
-      index: true,
-      follow: true,
-      googleBot: {
-        index: true,
-        follow: true,
-        'max-video-preview': -1,
-        'max-image-preview': 'large',
-        'max-snippet': -1,
-      },
-    },
+    keywords,
     openGraph: {
-      type: 'website',
-      locale: 'en_US',
-      url: canonical || baseUrl,
-      siteName: 'ZEVANY Luxury Jewelry',
       title,
-      description,      images: [
-        {
-          url: `${baseUrl}${ogImage}`,
-          width: 1200,
-          height: 630,
-          alt: title,
-        },
-      ],
-      ...(product && {
-        'product:price:amount': product.price?.replace('$', '').replace(',', '') || '0',
-        'product:price:currency': 'USD',
-        'product:availability': product.inStock ? 'in stock' : 'out of stock',
-        'product:condition': 'new',
-        'product:brand': 'ZEVANY'
-      })
+      description,
+      url: canonical || baseUrl,
+      images: [ogImage],
+      type: product ? 'article' : 'website'
     },
     twitter: {
       card: 'summary_large_image',
-      site: '@zevany',
-      creator: '@zevany',
       title,
       description,
-      images: [`${baseUrl}${ogImage}`],    },
-    alternates: {
-      canonical: canonical || baseUrl,
+      images: [ogImage]
     },
-    other: {
-      'price': product?.price?.replace('$', '').replace(',', '') || '0',
-      'priceCurrency': 'USD',
-      'availability': product?.inStock ? 'InStock' : 'OutOfStock',
-      'condition': 'NewCondition',
-    },
+    ...(canonical ? { robots: { index: !noindex, follow: true } } : {})
   }
+  
+  return metadata
 }
 
-// Component for structured data injection
 export function StructuredData({ data }: { data: object }) {
   return (
     <script
       type="application/ld+json"
-      dangerouslySetInnerHTML={{
-        __html: JSON.stringify(data, null, 2)
-      }}
+      dangerouslySetInnerHTML={{ __html: JSON.stringify(data) }}
     />
-  )
-}
-
-// Hook for SEO in pages
-export function useSEO(props: SEOProps) {
-  const metadata = generateMetadata(props)
-  
-  const structuredDataArray = []
-  
-  // Always include organization and website schemas
-  structuredDataArray.push(generateOrganizationSchema())
-  structuredDataArray.push(generateWebsiteSchema())
-  
-  // Add product schema if product is provided
-  if (props.product) {
-    structuredDataArray.push(generateProductSchema(props.product))
-  }
-  
-  // Add custom structured data
-  if (props.structuredData) {
-    structuredDataArray.push(props.structuredData)
-  }
-  
-  return {
-    metadata,
-    structuredData: structuredDataArray
-  }
-}
-
-// Named export for SEO utilities
-export const seoUtilities = {
-  generateMetadata,
-  generateProductSchema,
-  generateOrganizationSchema,
-  generateWebsiteSchema,
-  generateBreadcrumbSchema,
-  StructuredData,
-  useSEO
+  );
 }

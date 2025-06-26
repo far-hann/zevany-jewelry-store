@@ -1,42 +1,97 @@
-"use client"
-import { SimpleProductCard } from '@/components/SimpleProductCard'
-import { products } from '@/data/products'
+"use client";
+
+import ShowcaseProductCard from '@/components/ShowcaseProductCard';
+import { useState, useEffect } from 'react';
+import { Product } from '@/types/Product';
 
 export default function Bracelets() {
-  // Filter only bracelet products by checking the image path
-  const braceletProducts = products.filter(p => p.images[0]?.includes('/bracelets/'));
+  const [braceletProducts, setBraceletProducts] = useState<Product[]>([]);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState<string | null>(null);
+
+  // Fetch bracelet products from our API
+  useEffect(() => {
+    const fetchProducts = async () => {
+      try {
+        const response = await fetch('/api/products?category=bracelets');
+        if (!response.ok) throw new Error('Failed to fetch bracelet products');
+        
+        const data = await response.json();
+        
+        // Ensure each product has the required details property
+        const processedProducts = (data.products || []).map((product: any) => {
+          const details = product.specifications || {};
+          
+          return {
+            ...product,
+            details: {
+              material: details.material || product.material || 'Gold',
+              gemstone: details.gemstone || product.gemstone || 'Diamond',
+              weight: details.weight || product.weight || '0.10 ct',
+              dimensions: details.dimensions || product.dimensions || '15mm',
+              ...details
+            }
+          };
+        });
+        
+        setBraceletProducts(processedProducts);
+      } catch (error) {
+        console.error('Error fetching bracelet products:', error);
+        setError('Unable to load bracelets. Please try again later.');
+      } finally {
+        setLoading(false);
+      }
+    };
+    
+    fetchProducts();
+  }, []);
+
+  const parsePrice = (price: string | number): number => {
+    if (typeof price === 'number') return price;
+    return parseFloat(price.replace(/[^\d.]/g, '')) || 0;
+  };
+
   return (
-    <div className="min-h-screen" style={{ background: '#f5f3ea' }}>
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
+    <div className="min-h-screen bg-[#f5f3ea]">
+      <div className="w-full py-12 px-4 sm:px-6 lg:px-8">
         {/* Header Section */}
         <div className="text-center mb-12">
-          <h1 className="font-serif text-4xl font-light text-gray-900 mb-6 tracking-wide">Complete the Look</h1>
+          <h1 className="text-4xl lg:text-5xl font-bold text-gray-900 mb-4" style={{ fontFamily: "var(--font-cormorant)" }}>
+            Bracelets
+          </h1>
+          <p className="text-xl text-gray-600 max-w-2xl mx-auto" style={{ fontFamily: "var(--font-montserrat)" }}>
+            Elegant bracelets that add sophistication to any outfit. From delicate chains to statement pieces.
+          </p>
         </div>
-        {/* Products Grid */}
-        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-10 lg:gap-14 px-2 md:px-0">          {braceletProducts.map((product) => (
-            <SimpleProductCard
-              key={product.id}
-              id={product.id}
-              name={product.name}
-              description={product.description}
-              price={product.price}
-              image={product.images[0]}
-              alt={product.name}              colors={Array.isArray(product.colors) ? product.colors.length : undefined}
-            />
-          ))}
+
+        {/* Products Count */}
+        <div className="mb-8">
+          <p className="text-sm text-gray-600" style={{ fontFamily: "var(--font-montserrat)" }}>
+            {loading ? 'Loading...' : `${braceletProducts.length} Results`}
+          </p>
         </div>
-        {/* Navigation Arrow */}        <div className="flex justify-end mt-8">
-          <button className="bg-black text-white p-3 rounded-lg hover:bg-gray-800">
-            <svg 
-              className="w-6 h-6" 
-              fill="none" 
-              stroke="currentColor" 
-              viewBox="0 0 24 24"
-            >
-              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
-            </svg>          </button>
+
+        {/* Product Grid */}
+        <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-[4px]">
+          {loading
+            ? Array.from({ length: 8 }).map((_, index) => (
+                <div key={index} className="bg-white h-96 animate-pulse"></div>
+              ))
+            : braceletProducts.map((product) => (
+                <ShowcaseProductCard
+                  key={product.id}
+                  id={product.id}
+                  name={product.name}
+                  description={product.description}
+                  price={parsePrice(product.price)}
+                  image={product.images[0]}
+                  images={product.images}
+                  isNew={product.isNew}
+                  colors={product.colors}
+                />
+              ))}
         </div>
       </div>
     </div>
-  )
+  );
 }

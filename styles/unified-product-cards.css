@@ -1,0 +1,146 @@
+/* Unified Product Card Styles - Based on Necklaces Page */
+
+/* Product grid - thin grid lines as requested */
+.swarovski-product-grid {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 16px 8px; /* Thin grid lines as requested */
+  width: 100%;
+}
+
+@media (max-width: 1200px) {
+  .swarovski-product-grid {
+    grid-template-columns: repeat(3, 1fr);
+  }
+}
+
+@media (max-width: 768px) {
+  .swarovski-product-grid {
+    grid-template-columns: repeat(2, 1fr);
+  }
+}
+
+/* Product card container */
+.swarovski-card {
+  background-color: white;
+  height: 100%;
+  border: 1px solid #f0f0f0;
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+}
+
+/* Product image container */
+.swarovski-card .relative.bg-white.p-0.mb-3 {
+  max-height: 80%;
+}
+
+/* Image aspect ratio container */
+.swarovski-card .relative.bg-white.p-0.mb-3 > div[style*="aspectRatio"] {
+  aspect-ratio: 1/1;
+  width: 100%;
+  overflow: hidden;
+}
+
+/* Product image */
+.swarovski-card img {
+  object-fit: contain;
+  width: 100%;
+  height: 100%;
+  padding: 5px;
+}
+
+/* Product info section */
+.swarovski-card .p-3 {
+  min-height: 110px;
+  padding: 12px;
+  display: block !important;
+  visibility: visible !important;
+  opacity: 1 !important;
+}
+
+/* Product title */
+.swarovski-product-title {
+  font-size: 0.9rem;
+  font-weight: 400;
+  color: #212121;
+  margin-bottom: 6px;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  display: -webkit-box;
+  -webkit-line-clamp: 2;
+  -webkit-box-orient: vertical;
+  line-height: 1.3;
+  min-height: 2.6em; /* Ensures consistent height for title */
+}
+
+/* Product subtitle */
+.swarovski-product-subtitle {
+  font-size: 0.75rem;
+  font-weight: 400;
+  color: #616161;
+  margin-bottom: 8px;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  display: -webkit-box;
+  -webkit-line-clamp: 1;
+  -webkit-box-orient: vertical;
+  line-height: 1.2;
+  min-height: 1.2em; /* Ensures consistent height for subtitle */
+}
+
+/* Price container */
+.swarovski-price-container {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  margin-bottom: 4px;
+}
+
+/* Current price */
+.swarovski-current-price {
+  font-size: 0.95rem;
+  font-weight: 500;
+  color: #212121;
+}
+
+/* Original price */
+.swarovski-original-price {
+  font-size: 0.85rem;
+  color: #9e9e9e;
+  text-decoration: line-through;
+}
+
+/* Tax text */
+.swarovski-tax-text {
+  font-size: 0.75rem;
+  color: #9e9e9e;
+}
+
+/* Product skeleton styles to match card layout */
+.swarovski-skeleton {
+  background-color: white;
+  height: 100%;
+  border: 1px solid #f0f0f0;
+}
+
+.swarovski-skeleton .relative.bg-white.p-0.mb-3 {
+  max-height: 75%;
+}
+
+/* Ensure all skeleton elements are visible */
+.swarovski-skeleton-title,
+.swarovski-skeleton-subtitle,
+.swarovski-skeleton-price,
+.swarovski-skeleton-tax {
+  display: block !important;
+  visibility: visible !important;
+  opacity: 1 !important;
+}
+
+/* Animation disabling for consistent appearance */
+.swarovski-card *:not(.zevany-text):not(.zevany-text *):not([class*="cart-btn"]):not([class*="wishlist-btn"]) {
+  animation-duration: 0s !important;
+  transition-duration: 0s !important;
+  transform: none !important;
+}

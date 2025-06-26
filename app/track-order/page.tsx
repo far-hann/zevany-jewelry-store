@@ -3,6 +3,7 @@
 import { useState } from 'react'
 import { Search, Package, Truck, CheckCircle, Clock, Mail, Phone } from 'lucide-react'
 import Link from 'next/link'
+import withAuth from '../../src/utils/withAuth';
 
 interface Order {
   id: string
@@ -28,7 +29,7 @@ interface Order {
   }
 }
 
-export default function OrderTrackingPage() {
+function OrderTrackingPage() {
   const [searchQuery, setSearchQuery] = useState('')
   const [searchEmail, setSearchEmail] = useState('')
   const [searchResult, setSearchResult] = useState<Order | null>(null)
@@ -279,3 +280,5 @@ export default function OrderTrackingPage() {
     </div>
   )
 }
+
+export default withAuth(OrderTrackingPage);

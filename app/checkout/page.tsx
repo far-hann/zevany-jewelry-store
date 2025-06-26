@@ -4,6 +4,7 @@ import { Lock, Package2, Gift } from 'lucide-react'
 import Link from 'next/link'
 import Image from 'next/image'
 import { PayPalCreateOrderData, PayPalCaptureResult } from '@/types/paypal'
+import withAuth from '../../src/utils/withAuth';
 
 
 type CartItem = {
@@ -17,7 +18,7 @@ type CartItem = {
   collection?: string;
 };
 
-export default function CheckoutPage() {  
+function CheckoutPage() {  
   const [cart, setCart] = useState<CartItem[]>([]);
   const [giftPackaging, setGiftPackaging] = useState(false);
   const [giftNote, setGiftNote] = useState("");
@@ -524,3 +525,5 @@ export default function CheckoutPage() {
     </div>
   );
 }
+
+export default withAuth(CheckoutPage);

@@ -6,31 +6,74 @@ import { products } from '@/data/products'
 import { getWishlist, removeFromWishlist } from '@/utils/cartWishlist'
 import Link from 'next/link'
 import Image from 'next/image'
+import AuthPromptModal from '@/src/components/AuthPromptModal'
+import AuthModal from '@/src/components/AuthModal'
+import { useAuthPrompt } from '@/src/hooks/useAuthPrompt'
 
-export default function Wishlist() {
+function Wishlist() {
   const [wishlistItems, setWishlistItems] = useState<string[]>([])
+  const [isAuthModalOpen, setIsAuthModalOpen] = useState(false)
+  const [authModalTab, setAuthModalTab] = useState<'login' | 'signup'>('login')
+  
+  const { isPromptOpen, featureName, checkAuthAndPrompt, closePrompt } = useAuthPrompt()
 
   useEffect(() => {
+    localStorage.getItem('user')
     setWishlistItems(getWishlist())
   }, [])
+
+  const handleLogin = () => {
+    closePrompt()
+    setAuthModalTab('login')
+    setIsAuthModalOpen(true)
+  }
+
+  const handleSignup = () => {
+    closePrompt()
+    setAuthModalTab('signup')
+    setIsAuthModalOpen(true)
+  }
+
+  const closeAuthModal = () => {
+    setIsAuthModalOpen(false)
+  }
   const handleRemoveFromWishlist = (productId: string) => {
     removeFromWishlist(productId)
     setWishlistItems(getWishlist())
     window.dispatchEvent(new Event('cartWishlistUpdate'))
   }
-
   const wishlistProducts = products.filter(product => wishlistItems.includes(product.id))
+
+  // Check authentication when component mounts
+  useEffect(() => {
+    if (!checkAuthAndPrompt('wishlist')) {
+      return // Authentication prompt will be shown
+    }
+  }, [checkAuthAndPrompt])
+
   return (
     <div className="min-h-screen" style={{ background: '#f5f3ea' }}>
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
-        <div className="text-center mb-12">
-          <div className="flex items-center justify-center mb-4">
-            <Heart className="h-8 w-8 text-red-500 mr-3" />
-            <h1 className="text-4xl font-bold text-gray-900 font-serif">My Wishlist</h1>
+        <div className="mb-12">
+          <div className="flex items-center justify-between mb-4">
+            <Link href="/" className="text-gray-900 hover:text-gray-700 transition-colors">
+              <div className="flex items-center">
+                <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="mr-2">
+                  <path d="M15 18l-6-6 6-6"/>
+                </svg>
+                <span>Back to shopping</span>
+              </div>
+            </Link>
           </div>
-          <p className="text-xl text-gray-600 font-serif">
-            Your favorite jewelry pieces saved for later
-          </p>
+          <div className="text-center">
+            <div className="flex items-center justify-center mb-4">
+              <Heart className="h-8 w-8 text-red-500 mr-3" />
+              <h1 className="text-4xl font-bold text-gray-900 font-serif">My Wishlist</h1>
+            </div>
+            <p className="text-xl text-gray-600 font-serif">
+              Your favorite jewelry pieces saved for later
+            </p>
+          </div>
         </div>
         
         {wishlistProducts.length === 0 ? (
@@ -77,7 +120,23 @@ export default function Wishlist() {
                   </Link>
                 </div></div>
             ))}
-          </div>        )}      </div>
+          </div>        )}      </div>      {/* Authentication Prompt Modal */}
+      <AuthPromptModal
+        isOpen={isPromptOpen}
+        onClose={closePrompt}
+        featureName={featureName}
+        onLogin={handleLogin}
+        onSignup={handleSignup}
+      />
+
+      {/* Authentication Modal */}
+      <AuthModal
+        isOpen={isAuthModalOpen}
+        onClose={closeAuthModal}
+        defaultTab={authModalTab}
+      />
     </div>
   )
 }
+
+export default Wishlist;

@@ -18,12 +18,11 @@ async function fetchCurrentUser() {
 
 export default function AdminAuthGuard({ children }: { children: React.ReactNode }) {
   const router = useRouter();
-
   useEffect(() => {
     (async () => {
       const user = await fetchCurrentUser();
       if (!user || (user.role !== "admin" && user.role !== "super-admin")) {
-        router.replace("/account?unauthorized=1");
+        router.replace("/admin/login");
       }
     })();
   }, [router]);

@@ -1,7 +1,8 @@
 'use client'
 
-import { useState } from 'react'
+import { useState, useEffect } from 'react'
 import { X, User, Mail, Lock, Eye, EyeOff } from 'lucide-react'
+import { toast } from 'react-hot-toast';
 
 interface AuthModalProps {
   isOpen: boolean
@@ -14,6 +15,7 @@ export default function AuthModal({ isOpen, onClose, defaultTab = 'login' }: Aut
   const [showPassword, setShowPassword] = useState(false)
   const [loading, setLoading] = useState(false)
   const [errors, setErrors] = useState<{ [key: string]: string }>({})
+  const [signupSuccess, setSignupSuccess] = useState(false);
   
   const [loginData, setLoginData] = useState({
     email: '',
@@ -28,18 +30,25 @@ export default function AuthModal({ isOpen, onClose, defaultTab = 'login' }: Aut
     confirmPassword: ''
   })
 
+  useEffect(() => {
+    if (isOpen) {
+      setErrors({});
+      setSignupSuccess(false);
+      setActiveTab(defaultTab || 'login');
+    }
+  }, [isOpen, defaultTab]);
+
   if (!isOpen) return null
 
   const handleLogin = async (e: React.FormEvent) => {
     e.preventDefault()
     setLoading(true)
     setErrors({})
-    
-    // Basic validation
+
     const newErrors: { [key: string]: string } = {}
     if (!loginData.email) newErrors.email = 'Email is required'
     if (!loginData.password) newErrors.password = 'Password is required'
-    
+
     if (Object.keys(newErrors).length > 0) {
       setErrors(newErrors)
       setLoading(false)
@@ -47,24 +56,29 @@ export default function AuthModal({ isOpen, onClose, defaultTab = 'login' }: Aut
     }
 
     try {
-      // In a real app, you would call your authentication API
-      // For demo purposes, we'll simulate a successful login
-      await new Promise(resolve => setTimeout(resolve, 1000))
+      const response = await fetch('/api/auth/login', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(loginData),
+      });
+
+      const result = await response.json();
+
+      if (!response.ok) {
+        throw new Error(result.error || 'Login failed');
+      }
       
-      // Store user session (in real app, use proper authentication)
-      localStorage.setItem('user', JSON.stringify({
-        email: loginData.email,
-        firstName: 'Demo',
-        lastName: 'User'
-      }))
+      toast.success('Login successful!');
+      localStorage.setItem('user', JSON.stringify(result.user));
       
       setLoading(false)
       onClose()
-      window.location.reload() // Refresh to update navbar
-        } catch (error) {
+      window.location.reload()
+    } catch (error: any) {
       setLoading(false)
       console.error('Login error:', error)
-      setErrors({ general: 'Login failed. Please try again.' })
+      setErrors({ general: error.message || 'Login failed. Please try again.' })
+      toast.error(error.message || 'Login failed. Please try again.');
     }
   }
 
@@ -72,8 +86,8 @@ export default function AuthModal({ isOpen, onClose, defaultTab = 'login' }: Aut
     e.preventDefault()
     setLoading(true)
     setErrors({})
-    
-    // Validation
+    setSignupSuccess(false);
+
     const newErrors: { [key: string]: string } = {}
     if (!signupData.firstName) newErrors.firstName = 'First name is required'
     if (!signupData.lastName) newErrors.lastName = 'Last name is required'
@@ -86,7 +100,7 @@ export default function AuthModal({ isOpen, onClose, defaultTab = 'login' }: Aut
     if (signupData.password !== signupData.confirmPassword) {
       newErrors.confirmPassword = 'Passwords do not match'
     }
-    
+
     if (Object.keys(newErrors).length > 0) {
       setErrors(newErrors)
       setLoading(false)
@@ -94,23 +108,28 @@ export default function AuthModal({ isOpen, onClose, defaultTab = 'login' }: Aut
     }
 
     try {
-      // In a real app, you would call your registration API
-      await new Promise(resolve => setTimeout(resolve, 1000))
-      
-      // Store user session
-      localStorage.setItem('user', JSON.stringify({
-        email: signupData.email,
-        firstName: signupData.firstName,
-        lastName: signupData.lastName
-      }))
-      
-      setLoading(false)
-      onClose()
-      window.location.reload()
-        } catch (error) {
+      const response = await fetch('/api/auth/signup', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(signupData),
+      });
+
+      const result = await response.json();
+
+      if (!response.ok) {
+        throw new Error(result.error || 'Signup failed');
+      }
+
+      toast.success('Account created successfully! Please log in.');
+      setSignupSuccess(true);
+      setLoading(false);
+      setActiveTab('login'); // Switch to login tab on success
+
+    } catch (error: any) {
       setLoading(false)
       console.error('Signup error:', error)
-      setErrors({ general: 'Registration failed. Please try again.' })
+      setErrors({ general: error.message || 'Registration failed. Please try again.' })
+      toast.error(error.message || 'Registration failed. Please try again.');
     }
   }
 
@@ -159,6 +178,11 @@ export default function AuthModal({ isOpen, onClose, defaultTab = 'login' }: Aut
           {errors.general && (
             <div className="mb-4 p-3 bg-red-100 border border-red-400 text-red-700 rounded">
               {errors.general}
+            </div>
+          )}
+          {signupSuccess && (
+            <div className="mb-4 p-3 bg-green-100 border border-green-400 text-green-700 rounded">
+              Sign up successful! You can now log in.
             </div>
           )}
 
@@ -220,7 +244,7 @@ export default function AuthModal({ isOpen, onClose, defaultTab = 'login' }: Aut
               </button>
             </form>
           ) : (
-            <form onSubmit={handleSignup} className="space-y-4">
+            <form onSubmit={handleSignup} className="space-y-6">
               <div className="grid grid-cols-2 gap-4">
                 <div>
                   <label className="block text-sm font-medium text-gray-700 mb-1">

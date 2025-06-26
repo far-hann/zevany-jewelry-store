@@ -1,0 +1,99 @@
+/* Perfectly matching product cards with their skeleton counterparts */
+
+/* Main card container */
+.swarovski-card {
+  background-color: white;
+  height: 100%;
+  border: 1px solid #f0f0f0;
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+}
+
+/* Ensure image doesn't take too much space */
+.swarovski-card .relative {
+  max-height: 75%;
+}
+
+/* Product info section - ensure proper visibility */
+.swarovski-card .p-3 {
+  min-height: 90px;
+  padding: 10px;
+  display: block !important;
+}
+
+/* Product title */
+.swarovski-product-title {
+  font-size: 0.9rem;
+  font-weight: 400;
+  color: #212121;
+  margin-bottom: 4px;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  display: -webkit-box;
+  -webkit-line-clamp: 1;
+  -webkit-box-orient: vertical;
+  line-height: 1.2;
+}
+
+/* Product subtitle */
+.swarovski-product-subtitle {
+  font-size: 0.75rem;
+  font-weight: 400;
+  color: #616161;
+  margin-bottom: 6px;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  display: -webkit-box;
+  -webkit-line-clamp: 1;
+  -webkit-box-orient: vertical;
+  line-height: 1.2;
+}
+
+/* Price container */
+.swarovski-price-container {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  margin-bottom: 4px;
+}
+
+/* Current price */
+.swarovski-current-price {
+  font-size: 0.95rem;
+  font-weight: 500;
+  color: #212121;
+}
+
+/* Original price */
+.swarovski-original-price {
+  font-size: 0.85rem;
+  color: #9e9e9e;
+  text-decoration: line-through;
+}
+
+/* Tax text */
+.swarovski-tax-text {
+  font-size: 0.75rem;
+  color: #9e9e9e;
+}
+
+/* Grid - exactly matching the spacing you wanted */
+.swarovski-product-grid {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 16px 8px; /* Thin grid lines as requested */
+  width: 100%;
+}
+
+@media (max-width: 1200px) {
+  .swarovski-product-grid {
+    grid-template-columns: repeat(3, 1fr);
+  }
+}
+
+@media (max-width: 768px) {
+  .swarovski-product-grid {
+    grid-template-columns: repeat(2, 1fr);
+  }
+}

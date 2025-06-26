@@ -10,6 +10,16 @@
 			"problemMatcher": [
 				"$tsc"
 			]
+		},
+		{
+			"label": "Start Admin Server",
+			"type": "shell",
+			"command": "npm run admin",
+			"group": "build",
+			"isBackground": true,
+			"problemMatcher": [
+				"$tsc"
+			]
 		}
 	]
 }

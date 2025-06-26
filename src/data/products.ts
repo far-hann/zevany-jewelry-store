@@ -10,7 +10,7 @@ export const products = [
     images: [
       '/images/jewelry/rings/diamond-solitaire-ring.jpg',
     ],
-    description: 'A timeless classic that never goes out of style. This stunning diamond solitaire ring features a brilliant cut center stone set in a classic gold band. The multicolored brilliance captures light from every angle, creating an enchanting display of fire and sparkle. Perfect for engagements, anniversaries, or as a statement piece.',
+    description: 'A timeless classic that never goes out of style. This stunning diamond solitaire ring features a brilliant cut center stone set in a classic gold band. The multicolored brilliance captures light from every angle, creating an enchanting display of fire and sparkle. Perfect for engagements, anniversaries, or as a statement piece. Supplied with quality authenticity certificate with product.',
     specifications: {
       ringSize: '6-8 (adjustable)',
       stoneDiameter: '8mm',
@@ -23,7 +23,8 @@ export const products = [
     rating: 4.9,
     reviews: 89,
     colors: ['clear', 'multicolor', 'black'],
-    inStock: true
+    inStock: true,
+    isNew: true
   },
   {
     id: '2',
@@ -35,7 +36,7 @@ export const products = [
     images: [
       '/images/jewelry/rings/vintage-emerald-ring.jpg',
     ],
-    description: 'Classic cut, Emerald ring with timeless elegance.',
+    description: 'Classic cut, Emerald ring with timeless elegance. Supplied with quality authenticity certificate with product.',
     specifications: {
       ringSize: '6-8 (adjustable)',
       material: 'Emerald, Gold-tone plated',
@@ -58,7 +59,7 @@ export const products = [
     images: [
       '/images/jewelry/rings/gold-wedding-band.jpg',
     ],
-    description: 'Classic cut, Gold wedding band for a timeless look.',
+    description: 'Classic cut, Gold wedding band for a timeless look. Supplied with quality authenticity certificate with product.',
     specifications: {
       ringSize: '6-8 (adjustable)',
       material: 'Gold',
@@ -81,7 +82,7 @@ export const products = [
     images: [
       '/images/jewelry/rings/diamond-pendant.jpg',
     ],
-    description: 'Round cut, Diamond pendant for a touch of sparkle.',
+    description: 'Round cut, Diamond pendant for a touch of sparkle. Supplied with quality authenticity certificate with product.',
     specifications: {
       length: '45 cm',
       material: 'Diamond, Gold-tone plated',
@@ -104,7 +105,7 @@ export const products = [
     images: [
       '/images/jewelry/rings/silver-chain.jpg',
     ],
-    description: 'Modern cut, Silver chain ring for a contemporary look.',
+    description: 'Modern cut, Silver chain ring for a contemporary look. Supplied with quality authenticity certificate with product.',
     specifications: {
       ringSize: '6-8 (adjustable)',
       material: 'Silver',
@@ -127,7 +128,7 @@ export const products = [
     images: [
       '/images/jewelry/necklaces/gold-pearl-necklace.jpg',
     ],
-    description: 'Whichever color you’re feeling, this vivid Chroma Twist pendant can match the mood. The gold-tone plated design connects to the chain with a Swarovski ReCreated™ crystal in green. Below, the reversible design means you can display a Swarovski ReCreated™ crystal in blue or a vibrant crystal in pink.',
+    description: 'Whichever color you’re feeling, this vivid Chroma Twist pendant can match the mood. The gold-tone plated design connects to the chain with a Swarovski ReCreated™ crystal in green. Below, the reversible design means you can display a Swarovski ReCreated™ crystal in blue or a vibrant crystal in pink. Supplied with quality authenticity certificate with product.',
     specifications: {
       length: '42 - 49 cm',
       motifSize: '2.3 x 1.3 cm',
@@ -152,7 +153,7 @@ export const products = [
     images: [
       '/images/jewelry/earrings/pearl-studs.jpg',
     ],
-    description: 'Round cut, Pearl studs for a classic look.',
+    description: 'Round cut, Pearl studs for a classic look. Supplied with quality authenticity certificate with product.',
     specifications: {
       material: 'Pearl, Gold-tone plated',
       color: 'Pearl',
@@ -175,7 +176,7 @@ export const products = [
     images: [
       '/images/jewelry/earrings/gold-hoops.jpg',
     ],
-    description: 'Classic cut, Gold hoops for a modern style.',
+    description: 'Classic cut, Gold hoops for a modern style. Supplied with quality authenticity certificate with product.',
     specifications: {
       material: 'Gold',
       color: 'Gold',
@@ -198,7 +199,7 @@ export const products = [
     images: [
       '/images/jewelry/earrings/diamond-drop-earrings.jpg',
     ],
-    description: 'Elegant cut, Diamond drop earrings for a sophisticated look.',
+    description: 'Elegant cut, Diamond drop earrings for a sophisticated look. Supplied with quality authenticity certificate with product.',
     specifications: {
       length: '3.5 cm',
       material: 'Crystals, Gold-tone plated',
@@ -222,7 +223,7 @@ export const products = [
     images: [
       '/images/jewelry/bracelets/tennis-bracelet.jpg',
     ],
-    description: 'Diamond cut, Crystal tennis bracelet for timeless elegance.',
+    description: 'Diamond cut, Crystal tennis bracelet for timeless elegance. Supplied with quality authenticity certificate with product.',
     specifications: {
       length: '18 cm',
       material: 'Crystals, Silver-tone plated',
@@ -246,7 +247,7 @@ export const products = [
     images: [
       '/images/jewelry/bracelets/charm-bracelet.jpg',
     ],
-    description: 'Mixed cut, Multicolored charm bracelet for a playful look.',
+    description: 'Mixed cut, Multicolored charm bracelet for a playful look. Supplied with quality authenticity certificate with product.',
     specifications: {
       length: '17 cm',
       material: 'Gold-tone plated',
@@ -270,7 +271,7 @@ export const products = [
     images: [
       '/images/jewelry/bracelets/gold-bangle.jpg',
     ],
-    description: 'Classic cut, Gold bangle for a timeless accessory.',
+    description: 'Classic cut, Gold bangle for a timeless accessory. Supplied with quality authenticity certificate with product.',
     specifications: {
       diameter: '6.5 cm',
       material: 'Gold',

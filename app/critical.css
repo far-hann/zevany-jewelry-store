@@ -1,0 +1,10 @@
+/* Additional styling to ensure ZEVANY text is visible */
+.zevany-text {
+  display: block !important;
+  visibility: visible !important;
+  opacity: 1 !important;
+  text-align: center;
+  transform: none !important;
+  z-index: 10;
+  position: relative;
+}

@@ -41,12 +41,22 @@ export default function sitemap(): MetadataRoute.Sitemap {
       lastModified: new Date(),
       changeFrequency: 'weekly' as const,
       priority: 0.8,
-    },
-    {
+    },    {
       url: `${baseUrl}/bracelets`,
       lastModified: new Date(),
       changeFrequency: 'weekly' as const,
       priority: 0.8,
+    },    {
+      url: `${baseUrl}/faq`,
+      lastModified: new Date(),
+      changeFrequency: 'monthly' as const,
+      priority: 0.7,
+    },
+    {
+      url: `${baseUrl}/jewelry-care`,
+      lastModified: new Date(),
+      changeFrequency: 'monthly' as const,
+      priority: 0.6,
     },
     {
       url: `${baseUrl}/cart`,

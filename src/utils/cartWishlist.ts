@@ -1,30 +1,92 @@
 // src/utils/cartWishlist.ts
 
-export function getCart() {
-  if (typeof window === 'undefined') return [];  return JSON.parse(localStorage.getItem('cart') || '[]');
+// Types for cart items
+export interface CartItem {
+  id: string;
+  name: string;
+  price: string | number;
+  image: string;
+  quantity: number;
+  color?: string;
+  size?: string;
+  variant?: string;
 }
 
-export function addToCart(productId: string) {
+export function getCart(): CartItem[] {
+  if (typeof window === 'undefined') return [];
+  return JSON.parse(localStorage.getItem('cart') || '[]');
+}
+
+export function addToCart(item: CartItem) {
   const cart = getCart();
-  if (!cart.includes(productId)) {
-    cart.push(productId);
-    localStorage.setItem('cart', JSON.stringify(cart));
-    // Immediately dispatch event to update navbar and floating cart
-    if (typeof window !== 'undefined') {
-      window.dispatchEvent(new Event('cartWishlistUpdate'));
-      window.dispatchEvent(new Event('cartUpdated'));
-    }
+  const existingItemIndex = cart.findIndex(cartItem => 
+    cartItem.id === item.id && 
+    cartItem.color === item.color && 
+    cartItem.size === item.size
+  );
+  
+  if (existingItemIndex !== -1) {
+    // Update quantity if item already exists with same options
+    cart[existingItemIndex].quantity += item.quantity;
+  } else {
+    // Add new item
+    cart.push(item);
   }
-}
-
-export function removeFromCart(productId: string) {
-  const cart = getCart().filter((id: string) => id !== productId);
+  
   localStorage.setItem('cart', JSON.stringify(cart));
+  
   // Immediately dispatch event to update navbar and floating cart
   if (typeof window !== 'undefined') {
     window.dispatchEvent(new Event('cartWishlistUpdate'));
     window.dispatchEvent(new Event('cartUpdated'));
   }
+  
+  return cart;
+}
+
+export function updateCartItem(itemId: string, updates: Partial<CartItem>) {
+  const cart = getCart();
+  const itemIndex = cart.findIndex(item => item.id === itemId);
+  
+  if (itemIndex !== -1) {
+    cart[itemIndex] = { ...cart[itemIndex], ...updates };
+    localStorage.setItem('cart', JSON.stringify(cart));
+    
+    // Dispatch events
+    if (typeof window !== 'undefined') {
+      window.dispatchEvent(new Event('cartWishlistUpdate'));
+      window.dispatchEvent(new Event('cartUpdated'));
+    }
+  }
+  
+  return cart;
+}
+
+export function removeFromCart(itemId: string, options: { color?: string, size?: string } = {}) {
+  let cart = getCart();
+  
+  if (options.color || options.size) {
+    // Remove specific variant
+    cart = cart.filter(item => 
+      !(item.id === itemId && 
+        (options.color ? item.color === options.color : true) && 
+        (options.size ? item.size === options.size : true)
+      )
+    );
+  } else {
+    // Remove all items with this id
+    cart = cart.filter(item => item.id !== itemId);
+  }
+  
+  localStorage.setItem('cart', JSON.stringify(cart));
+  
+  // Immediately dispatch event to update navbar and floating cart
+  if (typeof window !== 'undefined') {
+    window.dispatchEvent(new Event('cartWishlistUpdate'));
+    window.dispatchEvent(new Event('cartUpdated'));
+  }
+  
+  return cart;
 }
 
 export function getWishlist() {

@@ -10,18 +10,19 @@ import { addToCart, addToWishlist, removeFromWishlist, getWishlist } from '@/src
 interface Product {
   id: string
   name: string
-  price: string
-  originalPrice?: string
+  price: string | number
+  originalPrice?: string | number
   images: string[]
   description: string
-  rating: number
-  reviews: number
-  collection: string
-  articleNo: string
-  inStock: boolean
+  rating?: number
+  reviews?: number
+  collection?: string
+  articleNo?: string
+  inStock?: boolean
   materials?: string
   dimensions?: string
   care?: string
+  priceString?: string; // For displaying formatted price
 }
 
 interface MobileProductPageProps {
@@ -46,9 +47,14 @@ export default function MobileProductPage({ product }: MobileProductPageProps) {
   useEffect(() => {
     setIsInWishlist(getWishlist().some((item: string) => item === product.id))
   }, [product.id])
-
   const handleAddToCart = () => {
-    addToCart(product.id)
+    addToCart({
+      id: String(product.id),
+      name: product.name,
+      price: product.price,
+      image: product.images[0],
+      quantity: 1
+    })
     setShowAddToCartModal(true)
   }
 
@@ -264,7 +270,7 @@ export default function MobileProductPage({ product }: MobileProductPageProps) {
                 <Star
                   key={rating}
                   className={`h-4 w-4 ${
-                    product.rating > rating
+                    (product.rating || 5) > rating
                       ? 'text-yellow-400 fill-current'
                       : 'text-gray-300'
                   }`}
@@ -333,7 +339,7 @@ export default function MobileProductPage({ product }: MobileProductPageProps) {
         onClose={() => setShowAddToCartModal(false)}
         productName={product.name}
         productImage={product.images[0]}
-        productPrice={product.price}
+        productPrice={product.priceString || (typeof product.price === 'string' ? product.price : `$${product.price}`)}
       />
 
       {/* Zoom Modal */}

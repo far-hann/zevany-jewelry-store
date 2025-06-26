@@ -8,14 +8,10 @@ import {
   removeFromWishlist, 
   getWishlist 
 } from '@/utils/cartWishlist'
+import { Product } from '@/types/Product'
 
 interface ProductActionsProps {
-  product: {
-    id: string
-    name: string
-    price: string
-    images: string[]
-  }
+  product: Product
 }
 
 export default function ProductActions({ product }: ProductActionsProps) {
@@ -25,10 +21,15 @@ export default function ProductActions({ product }: ProductActionsProps) {
   useEffect(() => {
     setIsInWishlist(getWishlist().some((item: string) => item === product.id))
   }, [product.id])
-
   const handleAddToCart = () => {
     setIsAddingToCart(true)
-    addToCart(product.id)
+    addToCart({
+      id: String(product.id),
+      name: product.name,
+      price: product.price,
+      image: product.images[0],
+      quantity: 1
+    })
     setTimeout(() => setIsAddingToCart(false), 500)
   }
 

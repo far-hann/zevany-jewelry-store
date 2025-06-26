@@ -80,8 +80,13 @@ const nextConfig: NextConfig = {
     if (!dev && !isServer) {
       config.optimization = {
         ...config.optimization,
+        runtimeChunk: {
+          name: 'runtime', // Force a single runtime chunk
+        },
         splitChunks: {
-          ...config.optimization.splitChunks,
+          chunks: 'all',
+          maxInitialRequests: 25, // Increase from default to accommodate more chunks
+          minSize: 20000, // Slightly increase min size to reduce chunk count
           cacheGroups: {
             ...config.optimization.splitChunks?.cacheGroups,
             // Create vendor chunk for shared dependencies
@@ -90,6 +95,7 @@ const nextConfig: NextConfig = {
               name: 'vendors',
               chunks: 'all',
               priority: 10,
+              enforce: true,
             },
             // Create common chunk for shared code
             common: {
@@ -112,11 +118,14 @@ const nextConfig: NextConfig = {
     return config;
   },
   
-  // Disable webpack cache in development to prevent chunk issues
+  // Optimize experimental options to prevent chunk loading issues
   experimental: {
-    webpackBuildWorker: false,
     optimizeCss: true,
     scrollRestoration: true,
+    // Enable webpack build cache which is more reliable in Next.js 15+
+    webpackBuildWorker: true,
+    // Enable more sophisticated chunk loading
+    optimizePackageImports: ['react', 'react-dom', 'framer-motion', '@headlessui/react', '@heroicons/react'],
   },
   
   // External packages for server components

@@ -1,31 +1,42 @@
 import { NextRequest, NextResponse } from 'next/server';
-import { products } from '@/data/products';
+import { supabaseAdmin } from '@/src/utils/supabase/admin';
 
 export async function GET(request: NextRequest) {
   try {
     const { searchParams } = new URL(request.url);
     const category = searchParams.get('category');
     const limit = searchParams.get('limit');
-    
-    // Filter products by category if specified (based on image path)
-    let filteredProducts = products;
+    const id = searchParams.get('id');
+
+    let query = supabaseAdmin.from('products').select('*');
+
+    if (id) {
+      const { data, error } = await query.eq('id', id).single();
+      if (error) {
+        if (error.code === 'PGRST116') {
+          return NextResponse.json({ success: false, error: 'Product not found' }, { status: 404 });
+        }
+        throw error;
+      }
+      return NextResponse.json({ success: true, product: data });
+    }
+
     if (category) {
-      filteredProducts = products.filter(product => 
-        product.images[0]?.includes(`/${category.toLowerCase()}/`)
-      );
+      query = query.eq('category', category);
     }
-    
-    // Limit results if specified
-    if (limit) {
-      filteredProducts = filteredProducts.slice(0, parseInt(limit));
+
+    if (limit && !isNaN(parseInt(limit))) {
+      query = query.limit(parseInt(limit));
     }
-    
-    return NextResponse.json({
-      success: true,
-      products: filteredProducts,
-      total: filteredProducts.length
-    });
-    
+
+    const { data, error } = await query;
+
+    if (error) {
+      throw error;
+    }
+
+    return NextResponse.json({ success: true, products: data, total: data.length });
+
   } catch (error) {
     console.error('Products API error:', error);
     return NextResponse.json(
@@ -39,15 +50,14 @@ export async function POST(request: NextRequest) {
   try {
     // For admin - create new product
     const body = await request.json();
-    console.log('Product creation request:', body); // Using body to avoid unused variable error
     
-    // TODO: Add authentication check
-    // TODO: Add database integration
+    // NOTE: This public API endpoint should not be used for creating products
+    // Products should only be created through the admin API with authentication
     
     return NextResponse.json({
-      success: true,
-      message: 'Product creation endpoint - to be implemented'
-    });
+      success: false,
+      message: 'Products should be created through the admin API'
+    }, { status: 403 });
     
   } catch (error) {
     console.error('Create product error:', error);

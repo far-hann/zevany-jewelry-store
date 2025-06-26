@@ -33,7 +33,7 @@ interface Order {
   gift_packaging: boolean;
   gift_note?: string;
   created_at: string;
-  items: OrderItem[];
+  items?: OrderItem[]; // Mark as optional to handle cases where items might be undefined
 }
 
 interface OrderStats {
@@ -290,10 +290,9 @@ export function AdminOrdersManagement() {
                       </div>
                       <div className="text-sm text-gray-500">{order.customer_email}</div>
                     </div>
-                  </td>
-                  <td className="px-6 py-4 whitespace-nowrap">
+                  </td>                  <td className="px-6 py-4 whitespace-nowrap">
                     <div className="text-sm text-gray-900">
-                      {order.items.length} item{order.items.length > 1 ? 's' : ''}
+                      {order.items?.length || 0} item{(order.items?.length || 0) > 1 ? 's' : ''}
                     </div>
                   </td>
                   <td className="px-6 py-4 whitespace-nowrap">
@@ -369,9 +368,8 @@ export function AdminOrdersManagement() {
 
                 {/* Order Items */}
                 <div className="lg:col-span-2 bg-gray-50 p-4 rounded-lg">
-                  <h3 className="text-lg font-semibold mb-3">Order Items</h3>
-                  <div className="space-y-2">
-                    {selectedOrder.items.map((item) => (
+                  <h3 className="text-lg font-semibold mb-3">Order Items</h3>                  <div className="space-y-2">
+                    {selectedOrder.items?.map((item) => (
                       <div key={item.id} className="flex justify-between items-center p-2 bg-white rounded">
                         <div>
                           <p className="font-medium">{item.product_name}</p>
@@ -386,7 +384,7 @@ export function AdminOrdersManagement() {
                           <p className="text-sm text-gray-500">${item.unit_price.toFixed(2)} each</p>
                         </div>
                       </div>
-                    ))}
+                    )) || <p className="text-gray-500 italic">No items found</p>}
                   </div>
                 </div>
 
