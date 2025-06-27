@@ -31,6 +31,7 @@
     "dotenv": "^16.4.5",
     "framer-motion": "^11.0.8",
     "jose": "^5.2.4",
+    "jsonwebtoken": "^9.0.2",
     "lucide-react": "^0.354.0",
     "next": "14.2.4",
     "node-fetch": "^2.7.0",

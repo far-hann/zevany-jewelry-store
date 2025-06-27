@@ -49,14 +49,13 @@ html {
 * {
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
-  will-change: transform, opacity;
 }
 
 /* Keyframes for fade-in-up animation */
 @keyframes fadeInUp {
   from {
     opacity: 0;
-    transform: translateY(40px);
+    transform: translateY(50px);
   }
   to {
     opacity: 1;
@@ -66,7 +65,7 @@ html {
 
 /* Animation utility class */
 .animate-fade-in-up {
-  animation: fadeInUp 1.2s ease-out forwards;
+  animation: fadeInUp 0.8s ease-out forwards;
 }
 
 /* General link styles */
@@ -100,16 +99,10 @@ nav a:focus {
   text-decoration: none !important;
 }
 
-/* Hero ZEVANY text hover effect */
-/* Removed hero text hover effect */
-
-.zevany-hero-text {
-  text-align: center;
-}
-
 .zevany-hero-text {
   text-align: center;
   width: 100%;
+  padding: 0 1rem;
 }
 
 /* Reduce motion for users who prefer it */
@@ -124,77 +117,12 @@ nav a:focus {
   }
 }
 
-/* LIMIT ANIMATIONS TO KEY ELEMENTS (homepage ZEVANY text, cart/wishlist buttons, and product cards) */
-*:not(.zevany-text):not(.zevany-text *):not([class*="cart-btn"]):not([class*="wishlist-btn"]):not(.swarovski-card):not(.swarovski-card *),
-*:not(.zevany-text):not(.zevany-text *)::before:not([class*="cart-btn"]):not([class*="wishlist-btn"]):not(.swarovski-card):not(.swarovski-card *),
-*:not(.zevany-text):not(.zevany-text *)::after:not([class*="cart-btn"]):not([class*="wishlist-btn"]):not(.swarovski-card):not(.swarovski-card *) {
-  animation-duration: 0s !important;
-  animation-delay: 0s !important;
-  transition-duration: 0s !important;
-  transition-delay: 0s !important;
-  transform: none !important;
-  opacity: 1 !important;
-}
-
-/* Allow smooth interactions for cart and wishlist buttons */
-button[class*="absolute"]:hover,
-button[class*="absolute"]:active {
-  transition: all 0.15s ease !important;
-}
-
-button[class*="active:scale"]:active {
-  transform: scale(0.95) !important;
-  transition: transform 0.1s ease !important;
-}
-
-/* Mobile-friendly button sizing */
-@media (max-width: 768px) {
-  button[class*="absolute"][class*="p-2"],
-  button[class*="absolute"][class*="p-3"] {
-    min-width: 44px !important;
-    min-height: 44px !important;
-    display: flex !important;
-    align-items: center !important;
-    justify-content: center !important;
-  }
-}
-
-/* Force override any framer-motion styles */
-[data-framer-component]:not(.zevany-text *) {
-  animation: none !important;
-  transition: none !important;
-  transform: none !important;
-  opacity: 1 !important;
-}
-
-/* Override any CSS animation classes */
-.animate-pulse:not(.zevany-text *),
-.animate-spin:not(.zevany-text *),
-.animate-ping:not(.zevany-text *),
-.animate-bounce:not(.zevany-text *),
-.fade-in:not(.zevany-text *),
-.fadeIn:not(.zevany-text *),
-.slideIn:not(.zevany-text *),
-.zoomIn:not(.zevany-text *) {
-  animation: none !important;
-  transition: none !important;
-  transform: none !important;
-  opacity: 1 !important;
-}
-
-/* Specifically target grid items and product cards */
-.grid > *:not(.zevany-text *),
-[class*="grid"] > *:not(.zevany-text *),
-div[class*="bg-white"]:not(.zevany-text *),
-div[class*="rounded"]:not(.zevany-text *),
-div[class*="shadow"]:not(.zevany-text *) {
-  animation: none !important;
-  transition: none !important;
-  transform: none !important;
-  opacity: 1 !important;
-}
-
-h1, h2, h3, h4, h5, h6 {
+h1,
+h2,
+h3,
+h4,
+h5,
+h6 {
   font-family: var(--font-cormorant), serif;
   font-weight: 300;
   letter-spacing: 0.02em;
@@ -248,55 +176,82 @@ h1, h2, h3, h4, h5, h6 {
 }
 
 .container {
-  max-width: 100%;
-  overflow-x: hidden;
+  width: 100%;
+  max-width: 1280px;
+  margin: 0 auto;
+  padding: 0 1rem;
 }
 
-/* Custom responsive breakpoints for ZEVANY logo */
+.zevany-text {
+  font-size: 8rem;
+  font-weight: 300;
+  letter-spacing: 0.1em;
+  line-height: 1.1;
+  font-family: var(--font-cormorant);
+}
+
+/* More aggressive media queries to prevent text overflow on mobile */
+@media (max-width: 768px) {
+  .zevany-text {
+    font-size: 4.5rem;
+    letter-spacing: 0.08em;
+  }
+}
+@media (max-width: 480px) {
+  .zevany-text {
+    font-size: 3rem;
+    letter-spacing: 0.06em;
+  }
+}
 @media (max-width: 390px) {
   .zevany-text {
-    font-size: 2.5rem !important;
-    letter-spacing: 0.05em !important;
+    font-size: 2.5rem; 
+    letter-spacing: 0.05em;
   }
 }
-
 @media (max-width: 320px) {
   .zevany-text {
-    font-size: 2rem !important;
-    letter-spacing: 0.03em !important;
+    font-size: 2rem;
+    letter-spacing: 0.04em;
   }
 }
-
-/* Ensure minimum viewport for very small screens */
 @media (max-width: 280px) {
   .zevany-text {
-    font-size: 1.8rem !important;
-    letter-spacing: 0.02em !important;
+    font-size: 1.8rem;
+    letter-spacing: 0.03em;
   }
 }
 
-/* Fix for ensuring product info is visible */
 .swarovski-card .p-3,
-.swarovski-card .product-info {
-  display: block !important;
-  visibility: visible !important;
-  opacity: 1 !important;
-  position: static !important;
-  z-index: 10 !important;
-  transform: none !important;
-  background-color: white;
-  padding: 12px !important;
-  width: 100% !important;
+.swarovski-card .p-4 {
+  padding: 1rem;
 }
 
-/* Ensure product info elements are visible */
+.swarovski-card .group:hover .group-hover\:opacity-100 {
+  opacity: 1;
+}
+
+.swarovski-card .group:hover .group-hover\:scale-105 {
+  transform: scale(1.05);
+}
+
+.swarovski-card .transition-all {
+  transition-property: all;
+  transition-timing-function: cubic-bezier(0.4, 0, 0.2, 1);
+  transition-duration: 300ms;
+}
+
 .swarovski-product-title,
-.swarovski-product-subtitle,
-.swarovski-price-container,
-.swarovski-current-price,
-.swarovski-original-price,
-.swarovski-tax-text {
-  display: block !important;
-  visibility: visible !important;
-  opacity: 1 !important;
+.swarovski-product-price {
+  font-family: "Cormorant Garamond", serif;
+}
+
+/* Fix for product card text size on mobile */
+@media (max-width: 767px) {
+  .showcase-card-info h3 {
+    font-size: 0.9rem; /* Larger font size for name */
+  }
+  .showcase-card-info span {
+    font-size: 1rem; /* Larger font size for price */
+  }
 }

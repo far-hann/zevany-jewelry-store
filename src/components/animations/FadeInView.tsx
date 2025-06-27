@@ -12,15 +12,15 @@ interface FadeInViewProps {
 export function FadeInView({ 
   children, 
   delay = 0, 
-  duration = 0.6, 
+  duration = 0.8, 
   className = '',
   direction = 'up' 
 }: FadeInViewProps) {
   const directionVariants = {
-    up: { opacity: 0, y: 30 },
-    down: { opacity: 0, y: -30 },
-    left: { opacity: 0, x: 30 },
-    right: { opacity: 0, x: -30 },
+    up: { opacity: 0, y: 50 },
+    down: { opacity: 0, y: -50 },
+    left: { opacity: 0, x: 50 },
+    right: { opacity: 0, x: -50 },
     none: { opacity: 0 }
   }
 

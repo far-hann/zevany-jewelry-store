@@ -66,15 +66,15 @@ export default function Home() {
       {/* Section: Product Showcase, beige background restored */}
       <section className="py-12 bg-[#f5f3ea]">
         <div className="w-full px-4 sm:px-6 lg:px-8">
-          <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-[4px] auto-rows-min">
+          <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-1 md:gap-2">
             {isLoading ? (
               Array.from({ length: 12 }).map((_, index) => (
                 <ProductSkeletonV2 key={index} />
               ))
             ) : (
               <>
-                {/* First 8 products */}
-                {shuffledProducts.slice(0, 8).map((product) => (
+                {/* First 4 products */}
+                {shuffledProducts.slice(0, 4).map((product, index) => (
                   <ShowcaseProductCard
                     key={product.id}
                     id={product.id}
@@ -85,14 +85,15 @@ export default function Home() {
                     images={product.images}
                     isNew={product.isNew}
                     colors={product.colors}
+                    index={index}
                   />
                 ))}
                 
-                {/* Spring-Summer Banner - takes space of 2 cards (9th and 10th position) */}
+                {/* Spring-Summer Banner */}
                 <SpringSummerBanner imagePath="/images/banners/pixelperfect.png" />
                 
-                {/* Remaining products, skip 2 spots (9th and 10th products) */}
-                {shuffledProducts.slice(8).map((product) => (
+                {/* Remaining products */}
+                {shuffledProducts.slice(4).map((product, index) => (
                   <ShowcaseProductCard
                     key={product.id}
                     id={product.id}
@@ -103,6 +104,7 @@ export default function Home() {
                     images={product.images}
                     isNew={product.isNew}
                     colors={product.colors}
+                    index={index + 4}
                   />
                 ))}
               </>

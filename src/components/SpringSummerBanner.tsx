@@ -8,7 +8,7 @@ interface SpringSummerBannerProps {
   imagePath: string;
 }
 
-const SpringSummerBanner: React.FC<SpringSummerBannerProps> = ({ imagePath }) => {
+export default function SpringSummerBanner({ imagePath }: SpringSummerBannerProps) {
   return (
     <motion.div
       className="col-span-2 row-span-1 block group text-left"
@@ -21,9 +21,10 @@ const SpringSummerBanner: React.FC<SpringSummerBannerProps> = ({ imagePath }) =>
           <div className="relative w-full h-full">
             <Image
               src={imagePath}
-              alt="Spring-Summer 2025 Collection"
-              className="object-cover"
+              alt="Spring-Summer Collection"
               fill
+              className="object-cover object-center"
+              sizes="(max-width: 768px) 100vw, 50vw"
               priority
             />
             <div className="absolute top-0 left-0 p-4 text-white">
@@ -34,6 +35,4 @@ const SpringSummerBanner: React.FC<SpringSummerBannerProps> = ({ imagePath }) =>
       </Link>
     </motion.div>
   );
-};
-
-export default SpringSummerBanner;
+}
