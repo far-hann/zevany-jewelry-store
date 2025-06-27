@@ -34,10 +34,11 @@ export interface Product {
 
 // Create new product
 export async function createProduct(productData: Partial<Product>): Promise<Product> {
-  const newId = `${Date.now()}-${Math.random().toString(36).substring(2, 9)}`;
+  // Omit fields that are not in the database schema
+  const { details, inStock, isNew, isFeatured, ...createData } = productData;
+
   const newProductData = {
-    ...productData,
-    id: newId,
+    ...createData,
     created_at: new Date().toISOString(),
   };
 
@@ -57,34 +58,32 @@ export async function createProduct(productData: Partial<Product>): Promise<Prod
 
 // Update product by ID
 export async function updateProduct(id: string, updates: Partial<Product>): Promise<Product> {
+  // Omit fields that are not in the database schema to prevent errors
+  const { details, inStock, isNew, isFeatured, ...updateData } = updates;
+
   const { data, error } = await supabaseAdmin
     .from('products')
-    .update(updates)
+    .update(updateData)
     .eq('id', id)
     .select()
     .single();
 
   if (error) {
-    console.error(`Error updating product ${id} in Supabase:`, error);
+    console.error('Error updating product in Supabase:', error);
     throw new Error('Failed to update product.');
   }
-
-  return data as Product;
+  return data;
 }
 
 // Delete product by ID
-export async function deleteProduct(id: string): Promise<{ success: boolean }> {
-  const { error } = await supabaseAdmin
-    .from('products')
-    .delete()
-    .eq('id', id);
+export async function deleteProduct(id: string): Promise<boolean> {
+  const { error } = await supabaseAdmin.from('products').delete().eq('id', id);
 
   if (error) {
-    console.error(`Error deleting product ${id} from Supabase:`, error);
-    throw new Error('Failed to delete product.');
+    console.error('Error deleting product in Supabase:', error);
+    return false;
   }
-
-  return { success: true };
+  return true;
 }
 
 // Get all products

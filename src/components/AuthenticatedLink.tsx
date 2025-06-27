@@ -5,6 +5,7 @@ import Link from 'next/link'
 import { useAuthPrompt } from '@/src/hooks/useAuthPrompt'
 import AuthPromptModal from './AuthPromptModal'
 import AuthModal from './AuthModal'
+import { toast } from 'sonner'
 
 interface AuthenticatedLinkProps {
   href: string
@@ -53,7 +54,16 @@ export default function AuthenticatedLink({
     // For wishlist and account, check authentication
     if (!isAuthenticated) {
       e.preventDefault()
-      checkAuthAndPrompt(featureName)
+      // Instead of showing a modal, show a toast notification
+      toast.info('Please log in to use the wishlist.', {
+        action: {
+          label: 'Login',
+          onClick: () => {
+            setAuthModalTab('login');
+            setIsAuthModalOpen(true);
+          },
+        },
+      });
       return
     }
     
@@ -86,7 +96,7 @@ export default function AuthenticatedLink({
         {children}
       </Link>
 
-      {/* Authentication Prompt Modal */}
+      {/* Authentication Prompt Modal (kept for other potential uses) */}
       <AuthPromptModal
         isOpen={isPromptOpen}
         onClose={closePrompt}

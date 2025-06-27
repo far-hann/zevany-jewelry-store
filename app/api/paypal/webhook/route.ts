@@ -32,94 +32,21 @@ const createTransporter = () => {
   });
 };
 
-// Send email notification
-const sendPaymentNotification = async (eventType: string, paymentData: PayPalPaymentData) => {
+// Generic send email function
+const sendEmail = async (to: string, subject: string, html: string) => {
   try {
     const transporter = createTransporter();
-    
-    let subject = '';
-    let htmlContent = '';
-    
-    switch (eventType) {
-      case 'PAYMENT.CAPTURE.COMPLETED':
-        subject = '💰 Payment Received - ZEVANY Store';
-        htmlContent = `
-          <div style="max-width: 600px; margin: 0 auto; padding: 20px; font-family: Arial, sans-serif;">
-            <div style="text-align: center; margin-bottom: 30px;">
-              <h1 style="color: #28a745; margin-bottom: 10px;">✅ Payment Received!</h1>
-              <p style="color: #666; font-size: 16px;">A new payment has been successfully processed</p>
-            </div>
-            
-            <div style="background: #f8f9fa; padding: 30px; border-radius: 8px; margin-bottom: 30px;">
-              <h3 style="color: #333; margin-bottom: 20px;">Payment Details:</h3>
-              <p><strong>Transaction ID:</strong> ${paymentData.id || 'N/A'}</p>
-              <p><strong>Amount:</strong> $${paymentData.amount?.value || 'N/A'} ${paymentData.amount?.currency_code || 'USD'}</p>
-              <p><strong>Status:</strong> ${paymentData.status || 'N/A'}</p>
-              <p><strong>Time:</strong> ${new Date().toLocaleString()}</p>
-              <p><strong>Payer Email:</strong> ${paymentData.payer?.email_address || 'N/A'}</p>
-            </div>
-            
-            <div style="text-align: center; margin-top: 30px;">
-              <p style="color: #666; font-size: 14px;">ZEVANY Luxury Jewelry Store</p>
-            </div>
-          </div>
-        `;
-        break;
-        
-      case 'PAYMENT.CAPTURE.DENIED':
-        subject = '❌ Payment Denied - ZEVANY Store';
-        htmlContent = `
-          <div style="max-width: 600px; margin: 0 auto; padding: 20px; font-family: Arial, sans-serif;">
-            <div style="text-align: center; margin-bottom: 30px;">
-              <h1 style="color: #dc3545; margin-bottom: 10px;">❌ Payment Denied</h1>
-              <p style="color: #666; font-size: 16px;">A payment attempt was denied</p>
-            </div>
-            
-            <div style="background: #f8f9fa; padding: 30px; border-radius: 8px; margin-bottom: 30px;">
-              <h3 style="color: #333; margin-bottom: 20px;">Payment Details:</h3>
-              <p><strong>Transaction ID:</strong> ${paymentData.id || 'N/A'}</p>
-              <p><strong>Amount:</strong> $${paymentData.amount?.value || 'N/A'} ${paymentData.amount?.currency_code || 'USD'}</p>
-              <p><strong>Status:</strong> ${paymentData.status || 'N/A'}</p>
-              <p><strong>Time:</strong> ${new Date().toLocaleString()}</p>
-              <p><strong>Reason:</strong> ${paymentData.reason_code || 'Unknown'}</p>
-            </div>
-          </div>
-        `;
-        break;
-        
-      case 'PAYMENT.CAPTURE.REFUNDED':
-        subject = '🔄 Payment Refunded - ZEVANY Store';
-        htmlContent = `
-          <div style="max-width: 600px; margin: 0 auto; padding: 20px; font-family: Arial, sans-serif;">
-            <div style="text-align: center; margin-bottom: 30px;">
-              <h1 style="color: #ffc107; margin-bottom: 10px;">🔄 Payment Refunded</h1>
-              <p style="color: #666; font-size: 16px;">A refund has been processed</p>
-            </div>
-            
-            <div style="background: #f8f9fa; padding: 30px; border-radius: 8px; margin-bottom: 30px;">
-              <h3 style="color: #333; margin-bottom: 20px;">Refund Details:</h3>
-              <p><strong>Refund ID:</strong> ${paymentData.id || 'N/A'}</p>
-              <p><strong>Amount:</strong> $${paymentData.amount?.value || 'N/A'} ${paymentData.amount?.currency_code || 'USD'}</p>
-              <p><strong>Status:</strong> ${paymentData.status || 'N/A'}</p>
-              <p><strong>Time:</strong> ${new Date().toLocaleString()}</p>
-            </div>
-          </div>
-        `;
-        break;
-    }
-    
     const mailOptions = {
       from: `"ZEVANY Store" <${process.env.EMAIL_FROM || 'noreply@zevany.com'}>`,
-      to: process.env.ADMIN_EMAIL || 'admin@zevany.com',
-      subject: subject,
-      html: htmlContent
+      to,
+      subject,
+      html,
     };
-    
     await transporter.sendMail(mailOptions);
-    console.log(`✅ Email notification sent for ${eventType}`);
-    
+    console.log(`✅ Email sent to ${to} with subject "${subject}"`);
   } catch (error) {
-    console.error('❌ Failed to send email notification:', error);
+    console.error(`❌ Failed to send email to ${to}:`, error);
+    // We log the error but don't rethrow, as the webhook shouldn't fail if an email does.
   }
 };
 
@@ -143,26 +70,86 @@ export async function POST(request: NextRequest) {
     
     const eventType = webhookEvent.event_type;
     const paymentData = webhookEvent.resource;
-    
+    const adminEmail = process.env.ADMIN_EMAIL || 'admin@zevany.com';
+
     switch (eventType) {
       case 'PAYMENT.CAPTURE.COMPLETED':
         console.log('Payment completed:', paymentData.id);
-        // Send email notification for successful payment
-        await sendPaymentNotification(eventType, paymentData);
-        // Handle payment completion
+        
+        // 1. Send admin notification
+        const adminSubject = '💰 Payment Received - ZEVANY Store';
+        const adminHtmlContent = `
+          <div style="font-family: Arial, sans-serif; color: #333;">
+            <h2>✅ Payment Received!</h2>
+            <p>A new payment has been successfully processed.</p>
+            <h3>Payment Details:</h3>
+            <ul>
+              <li><strong>Transaction ID:</strong> ${paymentData.id || 'N/A'}</li>
+              <li><strong>Amount:</strong> $${paymentData.amount?.value || 'N/A'} ${paymentData.amount?.currency_code || 'USD'}</li>
+              <li><strong>Status:</strong> ${paymentData.status || 'N/A'}</li>
+              <li><strong>Payer Email:</strong> ${paymentData.payer?.email_address || 'N/A'}</li>
+            </ul>
+          </div>
+        `;
+        await sendEmail(adminEmail, adminSubject, adminHtmlContent);
+
+        // 2. Send customer confirmation email
+        const customerEmail = paymentData.payer?.email_address;
+        if (customerEmail) {
+          const customerSubject = '🎉 Your ZEVANY Store Order is Confirmed!';
+          const customerHtmlContent = `
+            <div style="max-width: 600px; margin: 0 auto; padding: 20px; font-family: Arial, sans-serif; border: 1px solid #ddd; border-radius: 8px;">
+              <div style="text-align: center; margin-bottom: 30px;">
+                <h1 style="color: #4a4a4a; margin-bottom: 10px;">🎉 Thank You For Your Order!</h1>
+                <p style="color: #666; font-size: 16px;">We've received your order and are getting it ready for shipment.</p>
+              </div>
+              <div style="background: #f8f9fa; padding: 30px; border-radius: 8px; margin-bottom: 30px;">
+                <h3 style="color: #333; margin-bottom: 20px; border-bottom: 1px solid #ddd; padding-bottom: 10px;">Order Summary</h3>
+                <p><strong>Transaction ID:</strong> ${paymentData.id || 'N/A'}</p>
+                <p><strong>Amount Paid:</strong> $${paymentData.amount?.value || 'N/A'} ${paymentData.amount?.currency_code || 'USD'}</p>
+                <p><strong>Order Date:</strong> ${new Date().toLocaleString()}</p>
+              </div>
+              <div style="margin-bottom: 30px;">
+                  <h3 style="color: #333; margin-bottom: 20px;">What's Next?</h3>
+                  <p style="color: #666;">You'll receive another email once your order has shipped. You can view your order history by logging into your account on our website.</p>
+              </div>
+              <div style="text-align: center; margin-top: 30px; padding-top: 20px; border-top: 1px solid #ddd;">
+                <p style="color: #666; font-size: 14px;">Thank you for shopping with ZEVANY Luxury Jewelry Store</p>
+              </div>
+            </div>
+          `;
+          await sendEmail(customerEmail, customerSubject, customerHtmlContent);
+        } else {
+            console.error('Could not send customer confirmation: payer email not available.');
+        }
         break;
+
       case 'PAYMENT.CAPTURE.DENIED':
         console.log('Payment denied:', paymentData.id);
-        // Send email notification for denied payment
-        await sendPaymentNotification(eventType, paymentData);
-        // Handle payment denial
+        const deniedSubject = '❌ Payment Denied - ZEVANY Store';
+        const deniedHtml = `
+            <div style="font-family: Arial, sans-serif; color: #333;">
+                <h2>❌ Payment Denied</h2>
+                <p>A payment attempt was denied. Details:</p>
+                <p><strong>Transaction ID:</strong> ${paymentData.id || 'N/A'}</p>
+                <p><strong>Reason:</strong> ${paymentData.reason_code || 'Unknown'}</p>
+            </div>`;
+        await sendEmail(adminEmail, deniedSubject, deniedHtml);
         break;
+
       case 'PAYMENT.CAPTURE.REFUNDED':
         console.log('Payment refunded:', paymentData.id);
-        // Send email notification for refund
-        await sendPaymentNotification(eventType, paymentData);
-        // Handle refund
+        const refundedSubject = '🔄 Payment Refunded - ZEVANY Store';
+        const refundedHtml = `
+            <div style="font-family: Arial, sans-serif; color: #333;">
+                <h2>🔄 Payment Refunded</h2>
+                <p>A refund has been processed. Details:</p>
+                <p><strong>Refund ID:</strong> ${paymentData.id || 'N/A'}</p>
+                <p><strong>Amount:</strong> $${paymentData.amount?.value || 'N/A'} ${paymentData.amount?.currency_code || 'USD'}</p>
+            </div>`;
+        await sendEmail(adminEmail, refundedSubject, refundedHtml);
         break;
+        
       default:
         console.log(`Unhandled PayPal webhook event: ${eventType}`);
     }

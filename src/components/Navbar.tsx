@@ -194,7 +194,15 @@ export function Navbar() {
                           </div>
                         ) : (
                           <div>
-                            <p className="text-sm text-gray-500 mb-2">Not logged in</p>
+                            <p className="text-sm text-gray-500 mb-2">Access your account</p>
+                            <div className="flex space-x-2">
+                                <Link href="/login" className="px-4 py-2 text-sm bg-gray-900 text-white rounded-md hover:bg-gray-800 transition-colors" onClick={() => setIsMenuOpen(false)}>
+                                    Login
+                                </Link>
+                                <Link href="/login?signup=true" className="px-4 py-2 text-sm bg-gray-200 text-gray-800 rounded-md hover:bg-gray-300 transition-colors" onClick={() => setIsMenuOpen(false)}>
+                                    Create Account
+                                </Link>
+                            </div>
                           </div>
                         )}
                       </div>

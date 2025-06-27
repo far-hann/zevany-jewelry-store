@@ -1,8 +1,7 @@
-import type { NextConfig } from "next";
-
-const nextConfig: NextConfig = {
+/** @type {import('next').NextConfig} */
+const nextConfig = {
   // Configure allowed development origins for cross-origin requests
-  allowedDevOrigins: ['192.168.29.57', 'localhost', '127.0.0.1'],
+  // allowedDevOrigins: ['192.168.29.57', 'localhost', '127.0.0.1'], // This property is not standard in all Next.js versions.
   
   // Enable image optimization for better performance
   images: {
@@ -58,7 +57,7 @@ const nextConfig: NextConfig = {
         source: '/_next/static/:path*',
         headers: [
           {
-            key: 'Cache-Control',
+            key: 'Cache-control',
             value: 'public, max-age=31536000, immutable',
           },
         ],
@@ -80,29 +79,13 @@ const nextConfig: NextConfig = {
     if (!dev && !isServer) {
       config.optimization = {
         ...config.optimization,
-        runtimeChunk: {
-          name: 'runtime', // Force a single runtime chunk
-        },
+        runtimeChunk: 'single',
         splitChunks: {
-          chunks: 'all',
-          maxInitialRequests: 25, // Increase from default to accommodate more chunks
-          minSize: 20000, // Slightly increase min size to reduce chunk count
           cacheGroups: {
-            ...config.optimization.splitChunks?.cacheGroups,
-            // Create vendor chunk for shared dependencies
             vendor: {
               test: /[\\/]node_modules[\\/]/,
               name: 'vendors',
               chunks: 'all',
-              priority: 10,
-              enforce: true,
-            },
-            // Create common chunk for shared code
-            common: {
-              minChunks: 2,
-              chunks: 'all',
-              name: 'common',
-              priority: 5,
             },
           },
         },
@@ -122,14 +105,13 @@ const nextConfig: NextConfig = {
   experimental: {
     optimizeCss: true,
     scrollRestoration: true,
-    // Enable webpack build cache which is more reliable in Next.js 15+
-    webpackBuildWorker: true,
-    // Enable more sophisticated chunk loading
-    optimizePackageImports: ['react', 'react-dom', 'framer-motion', '@headlessui/react', '@heroicons/react'],
+    // webpackBuildWorker and optimizePackageImports may not be supported in all Next.js versions.
+    // webpackBuildWorker: true, 
+    // optimizePackageImports: ['react', 'react-dom', 'framer-motion', '@headlessui/react', '@heroicons/react'],
   },
   
-  // External packages for server components
-  serverExternalPackages: [],
+  // serverExternalPackages is not a standard Next.js property.
+  // serverExternalPackages: [], 
   
   // Development settings to prevent cache issues
   generateEtags: false,
@@ -141,4 +123,4 @@ const nextConfig: NextConfig = {
   reactStrictMode: true,
 };
 
-export default nextConfig;
+export default nextConfig; 

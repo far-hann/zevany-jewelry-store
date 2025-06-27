@@ -265,26 +265,29 @@ export default function ProductForm({ initialData = {}, mode = 'create' }: Produ
     setError(null);
     setSuccess(null);
     
+    // Create payload object
+    const payload = { ...formData };
+    
     // Validate the form
-    if (!formData.name.trim()) {
+    if (!payload.name.trim()) {
       setError('Product name is required');
       setIsSubmitting(false);
       return;
     }
     
-    if (formData.price <= 0) {
+    if (payload.price <= 0) {
       setError('Price must be greater than zero');
       setIsSubmitting(false);
       return;
     }
     
-    if (!formData.category) {
+    if (!payload.category) {
       setError('Category is required');
       setIsSubmitting(false);
       return;
     }
     
-    if (formData.images.length === 0) {
+    if (payload.images.length === 0) {
       setError('At least one product image is required');
       setIsSubmitting(false);
       return;
@@ -294,14 +297,14 @@ export default function ProductForm({ initialData = {}, mode = 'create' }: Produ
       // API endpoint based on mode
       const endpoint = mode === 'create' 
         ? '/api/admin/products' 
-        : `/api/admin/products/${formData.id}`;
+        : `/api/admin/products/${payload.id}`;
       
       const method = mode === 'create' ? 'POST' : 'PUT';
       
       const response = await fetch(endpoint, {
         method,
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify(formData)
+        body: JSON.stringify(payload)
       });
       
       if (!response.ok) {

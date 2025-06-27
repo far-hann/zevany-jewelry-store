@@ -3,21 +3,26 @@ import { headers } from 'next/headers';
 import { isAuthenticated, isAdmin } from '../../../../src/utils/authUtils';
 import { getAllProducts, createProduct } from '../../../../src/utils/db/productsDb';
 import type { Product } from '../../../../src/utils/db/productsDb';
+import { jwtVerify } from 'jose';
+
+async function verifyAdmin(req: NextRequest): Promise<boolean> {
+    const token = req.cookies.get('admin-token')?.value;
+    if (!token) return false;
+
+    try {
+        const secret = new TextEncoder().encode(process.env.SUPABASE_SERVICE_ROLE_KEY!);
+        await jwtVerify(token, secret);
+        return true;
+    } catch (error) {
+        return false;
+    }
+}
 
 export async function GET(req: NextRequest) {
   try {
-    // Check authentication and authorization
-    const headersList = headers();
-    const authenticated = await isAuthenticated(headersList);
-    
-    if (!authenticated) {
-      return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
-    }
-    
-    const isAdminUser = await isAdmin(authenticated.userId);
-    
-    if (!isAdminUser) {
-      return NextResponse.json({ error: 'Forbidden' }, { status: 403 });
+    const isAdmin = await verifyAdmin(req);
+    if (!isAdmin) {
+        return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
     }
     
     // Fetch all products from our database
@@ -43,18 +48,9 @@ export async function GET(req: NextRequest) {
 
 export async function POST(req: NextRequest) {
   try {
-    // Check authentication and authorization
-    const headersList = headers();
-    const authenticated = await isAuthenticated(headersList);
-    
-    if (!authenticated) {
-      return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
-    }
-    
-    const isAdminUser = await isAdmin(authenticated.userId);
-    
-    if (!isAdminUser) {
-      return NextResponse.json({ error: 'Forbidden' }, { status: 403 });
+    const isAdmin = await verifyAdmin(req);
+    if (!isAdmin) {
+        return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
     }
     
     // Parse the request body
@@ -74,7 +70,6 @@ export async function POST(req: NextRequest) {
     const productData = {
       ...data,
       // Add other fields that might be needed for consistency
-      inStock: data.stock > 0,
       
       // Handle category-specific image path prefixes to ensure they show up in category pages
       images: Array.isArray(data.images) ? data.images.map((img: string) => {

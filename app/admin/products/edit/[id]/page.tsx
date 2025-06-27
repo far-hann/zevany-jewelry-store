@@ -1,18 +1,16 @@
 'use client';
 
 import { useState, useEffect } from 'react';
-import { use } from 'react';
 import ProductForm from '../../../../../src/components/admin/ProductForm';
 
 interface EditProductPageProps {
-  params: Promise<{
+  params: {
     id: string;
-  }>;
+  };
 }
 
 export default function EditProductPage({ params }: EditProductPageProps) {
-  // Use React.use() to unwrap the params Promise
-  const { id } = use(params);
+  const { id } = params;
   const [product, setProduct] = useState<any>(null);
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
@@ -71,7 +69,7 @@ export default function EditProductPage({ params }: EditProductPageProps) {
   return (
     <div className="container mx-auto px-4 py-8">
       <div className="mb-8">
-        <h1 className="text-2xl font-semibold">Edit Product</h1>
+        <h1 className="text-2xl font-semibold text-gray-900">Edit Product</h1>
         <p className="text-gray-600 mt-1">{product.name}</p>
       </div>
       

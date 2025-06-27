@@ -1,6 +1,8 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { cookies } from 'next/headers';
-import { sign } from 'jsonwebtoken';
+import { SignJWT } from 'jose';
+
+export const runtime = 'nodejs';
 
 export async function POST(req: NextRequest) {
   try {
@@ -14,12 +16,12 @@ export async function POST(req: NextRequest) {
     
     const adminEmail = process.env.ADMIN_EMAIL;
     const adminPassword = process.env.ADMIN_PASSWORD;
-    const jwtSecret = process.env.JWT_SECRET;
+    const jwtSecret = process.env.SUPABASE_SERVICE_ROLE_KEY;
     
     console.log(`Environment variables check: 
       ADMIN_EMAIL exists: ${Boolean(adminEmail)}
       ADMIN_PASSWORD exists: ${Boolean(adminPassword)}
-      JWT_SECRET exists: ${Boolean(jwtSecret)}`
+      SUPABASE_SERVICE_ROLE_KEY exists: ${Boolean(jwtSecret)}`
     );
     
     if (!adminEmail || !adminPassword || !jwtSecret) {
@@ -46,11 +48,12 @@ export async function POST(req: NextRequest) {
     console.log("Admin credentials verified successfully");
     
     // Create a JWT token
-    const token = sign(
-      { email, role: 'admin' },
-      jwtSecret,
-      { expiresIn: '8h' }
-    );
+    const secret = new TextEncoder().encode(jwtSecret);
+    const token = await new SignJWT({ email, role: 'admin' })
+      .setProtectedHeader({ alg: 'HS256' })
+      .setIssuedAt()
+      .setExpirationTime('8h')
+      .sign(secret);
       // Set the cookie
     const cookiesStore = await cookies();
     cookiesStore.set('admin-token', token, {

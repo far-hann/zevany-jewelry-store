@@ -1,15 +1,13 @@
 import { NextRequest, NextResponse } from 'next/server';
 import bcrypt from 'bcryptjs';
-import jwt from 'jsonwebtoken';
-import { createClient } from '@supabase/supabase-js';
+import { createClient } from '@/utils/supabase/server';
+import { SignJWT } from 'jose';
 
-// Supabase configuration
-const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL!;
-const supabaseKey = process.env.SUPABASE_SERVICE_ROLE_KEY!;
-const supabase = createClient(supabaseUrl, supabaseKey);
+export const runtime = 'nodejs';
 
 // Login endpoint
 export async function POST(request: NextRequest) {
+  const supabase = createClient();
   try {
     const { email, password } = await request.json();
     
@@ -45,11 +43,12 @@ export async function POST(request: NextRequest) {
       );
     }
       // Generate JWT token
-    const token = jwt.sign(
-      { userId: user.id, email: user.email, role: user.role },
-      process.env.SUPABASE_SERVICE_ROLE_KEY!,
-      { expiresIn: '24h' }
-    );
+    const secret = new TextEncoder().encode(process.env.SUPABASE_SERVICE_ROLE_KEY!);
+    const token = await new SignJWT({ userId: user.id, email: user.email, role: user.role })
+      .setProtectedHeader({ alg: 'HS256' })
+      .setIssuedAt()
+      .setExpirationTime('24h')
+      .sign(secret);
     
     return NextResponse.json({
       success: true,
