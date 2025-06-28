@@ -1,19 +1,23 @@
-import { createClient } from '@/utils/supabase/server';
 import { NextRequest, NextResponse } from 'next/server';
+import { getAllProducts } from '@/src/utils/db/productsDb';
 
 export const dynamic = 'force-dynamic';
 
 export async function GET(req: NextRequest) {
-  const supabase = createClient();
-  
-  const { data: products, error } = await supabase
-    .from('products')
-    .select('*');
+  try {
+    const products = await getAllProducts();
 
-  if (error) {
-    console.error('Error fetching products from Supabase:', error);
-    return NextResponse.json({ error: 'Failed to fetch products' }, { status: 500 });
+    return NextResponse.json({ 
+      success: true,
+      products,
+      message: products.length > 0 ? 'Products loaded successfully' : 'Using fallback product data'
+    });
+  } catch (error) {
+    console.error('Error in test-supabase route:', error);
+    return NextResponse.json({ 
+      success: false,
+      error: 'Failed to fetch products',
+      message: 'Check Supabase configuration'
+    }, { status: 500 });
   }
-
-  return NextResponse.json({ products });
 }

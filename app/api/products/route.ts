@@ -1,5 +1,5 @@
 import { NextRequest, NextResponse } from 'next/server';
-import { supabaseAdmin } from '@/src/utils/supabase/admin';
+import { getAllProducts, getProductById } from '@/src/utils/db/productsDb';
 
 export async function GET(request: NextRequest) {
   try {
@@ -8,34 +8,35 @@ export async function GET(request: NextRequest) {
     const limit = searchParams.get('limit');
     const id = searchParams.get('id');
 
-    let query = supabaseAdmin.from('products').select('*');
-
+    // If requesting a specific product by ID
     if (id) {
-      const { data, error } = await query.eq('id', id).single();
-      if (error) {
-        if (error.code === 'PGRST116') {
-          return NextResponse.json({ success: false, error: 'Product not found' }, { status: 404 });
-        }
-        throw error;
+      const product = await getProductById(id);
+      if (!product) {
+        return NextResponse.json({ success: false, error: 'Product not found' }, { status: 404 });
       }
-      return NextResponse.json({ success: true, product: data });
+      return NextResponse.json({ success: true, product });
     }
 
+    // Get all products
+    let products = await getAllProducts();
+
+    // Filter by category if specified
     if (category) {
-      query = query.eq('category', category);
+      products = products.filter(product => 
+        product.category?.toLowerCase() === category.toLowerCase()
+      );
     }
 
+    // Limit results if specified
     if (limit && !isNaN(parseInt(limit))) {
-      query = query.limit(parseInt(limit));
+      products = products.slice(0, parseInt(limit));
     }
 
-    const { data, error } = await query;
-
-    if (error) {
-      throw error;
-    }
-
-    return NextResponse.json({ success: true, products: data, total: data.length });
+    return NextResponse.json({ 
+      success: true, 
+      products, 
+      total: products.length 
+    });
 
   } catch (error) {
     console.error('Products API error:', error);
