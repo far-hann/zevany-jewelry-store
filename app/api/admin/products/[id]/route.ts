@@ -43,8 +43,9 @@ export async function GET(req: NextRequest, { params }: { params: Params }) {
     
   } catch (error) {
     console.error('Error fetching product:', error);
+    const errorMessage = error instanceof Error ? error.message : 'An unknown error occurred';
     return NextResponse.json(
-      { error: 'Internal Server Error' },
+      { error: 'Internal Server Error', details: errorMessage },
       { status: 500 }
     );
   }
@@ -126,8 +127,9 @@ export async function DELETE(req: NextRequest, { params }: { params: Params }) {
     
   } catch (error) {
     console.error('Error deleting product:', error);
+    const errorMessage = error instanceof Error ? error.message : 'An unknown error occurred';
     return NextResponse.json(
-      { error: 'Internal Server Error' },
+      { error: 'Internal Server Error', details: errorMessage },
       { status: 500 }
     );
   }

@@ -12,12 +12,34 @@ export async function GET() {
         paypal: 'checking...'
       },
       environment: process.env.NODE_ENV || 'development',
-      version: '1.0.0'
-    };    // Check environment variables
+      version: '1.0.0',
+      configuration: {
+        supabase: {
+          url: !!process.env.NEXT_PUBLIC_SUPABASE_URL,
+          serviceKey: !!process.env.SUPABASE_SERVICE_ROLE_KEY,
+          anonKey: !!process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY
+        },
+        admin: {
+          email: !!process.env.ADMIN_EMAIL,
+          password: !!process.env.ADMIN_PASSWORD
+        },
+        email: {
+          user: !!process.env.EMAIL_USER,
+          password: !!process.env.EMAIL_PASSWORD
+        },
+        paypal: {
+          clientId: !!process.env.NEXT_PUBLIC_PAYPAL_CLIENT_ID,
+          clientSecret: !!process.env.PAYPAL_CLIENT_SECRET
+        }
+      }
+    };
+
+    // Check environment variables
     const requiredEnvVars = [
-      'NEXT_PUBLIC_PAYPAL_CLIENT_ID',
-      'PAYPAL_CLIENT_SECRET',
-      'SUPABASE_SERVICE_ROLE_KEY'
+      'NEXT_PUBLIC_SUPABASE_URL',
+      'SUPABASE_SERVICE_ROLE_KEY',
+      'ADMIN_EMAIL',
+      'ADMIN_PASSWORD'
     ];
 
     const missingEnvVars = requiredEnvVars.filter(envVar => !process.env[envVar]);
@@ -29,19 +51,19 @@ export async function GET() {
 
     // Database connection check
     try {
-      // For now, we'll assume database is healthy if env vars are set
       if (process.env.NEXT_PUBLIC_SUPABASE_URL && process.env.SUPABASE_SERVICE_ROLE_KEY) {
-        healthStatus.services.database = 'online';
+        healthStatus.services.database = 'configured';
       } else {
-        healthStatus.services.database = 'configuration_missing';
+        healthStatus.services.database = 'not_configured';
         healthStatus.status = 'degraded';
-      }    } catch {
+      }
+    } catch {
       healthStatus.services.database = 'offline';
       healthStatus.status = 'unhealthy';
     }
 
     // Email service check
-    if (process.env.EMAIL_FROM && process.env.EMAIL_HOST) {
+    if (process.env.EMAIL_USER && process.env.EMAIL_PASSWORD) {
       healthStatus.services.email = 'configured';
     } else {
       healthStatus.services.email = 'not_configured';
@@ -52,7 +74,6 @@ export async function GET() {
       healthStatus.services.paypal = 'configured';
     } else {
       healthStatus.services.paypal = 'not_configured';
-      healthStatus.status = 'degraded';
     }
 
     return NextResponse.json(healthStatus, {

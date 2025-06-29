@@ -1,5 +1,4 @@
 import { NextRequest, NextResponse } from 'next/server';
-import { supabaseAdmin } from '@/src/utils/supabase/admin';
 
 export async function GET(request: NextRequest) {
   try {
@@ -8,39 +7,109 @@ export async function GET(request: NextRequest) {
     const limit = searchParams.get('limit');
     const id = searchParams.get('id');
 
-    let query = supabaseAdmin.from('products').select('*');
+    // Check if Supabase is configured
+    const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL;
+    const supabaseKey = process.env.SUPABASE_SERVICE_ROLE_KEY;
 
-    if (id) {
-      const { data, error } = await query.eq('id', id).single();
-      if (error) {
-        if (error.code === 'PGRST116') {
+    if (!supabaseUrl || !supabaseKey) {
+      // Return mock data if Supabase is not configured
+      const mockProducts = [
+        {
+          id: '1',
+          name: 'Diamond Solitaire Ring',
+          description: 'Beautiful diamond ring',
+          price: 2500,
+          category: 'rings',
+          images: ['/images/jewelry/rings/diamond-solitaire-ring.jpg'],
+          stock: 10,
+          created_at: new Date().toISOString()
+        },
+        {
+          id: '2',
+          name: 'Gold Necklace',
+          description: 'Elegant gold necklace',
+          price: 1800,
+          category: 'necklaces',
+          images: ['/images/jewelry/necklaces/gold-pearl-necklace.jpg'],
+          stock: 5,
+          created_at: new Date().toISOString()
+        }
+      ];
+
+      let filteredProducts = mockProducts;
+
+      if (id) {
+        const product = mockProducts.find(p => p.id === id);
+        if (!product) {
           return NextResponse.json({ success: false, error: 'Product not found' }, { status: 404 });
         }
+        return NextResponse.json({ success: true, product });
+      }
+
+      if (category) {
+        filteredProducts = mockProducts.filter(p => p.category === category);
+      }
+
+      if (limit && !isNaN(parseInt(limit))) {
+        filteredProducts = filteredProducts.slice(0, parseInt(limit));
+      }
+
+      return NextResponse.json({ 
+        success: true, 
+        products: filteredProducts, 
+        total: filteredProducts.length,
+        note: 'Using mock data - Supabase not configured'
+      });
+    }
+
+    // Use Supabase if configured
+    try {
+      const { createClient } = await import('@supabase/supabase-js');
+      const supabase = createClient(supabaseUrl, supabaseKey);
+
+      let query = supabase.from('products').select('*');
+
+      if (id) {
+        const { data, error } = await query.eq('id', id).single();
+        if (error) {
+          if (error.code === 'PGRST116') {
+            return NextResponse.json({ success: false, error: 'Product not found' }, { status: 404 });
+          }
+          throw error;
+        }
+        return NextResponse.json({ success: true, product: data });
+      }
+
+      if (category) {
+        query = query.eq('category', category);
+      }
+
+      if (limit && !isNaN(parseInt(limit))) {
+        query = query.limit(parseInt(limit));
+      }
+
+      const { data, error } = await query;
+
+      if (error) {
         throw error;
       }
-      return NextResponse.json({ success: true, product: data });
+
+      return NextResponse.json({ success: true, products: data, total: data.length });
+
+    } catch (supabaseError) {
+      console.error('Supabase error:', supabaseError);
+      const errorMessage = supabaseError instanceof Error ? supabaseError.message : 'An unknown database error occurred';
+      return NextResponse.json(
+        { success: false, error: 'Database connection failed', details: errorMessage },
+        { status: 500 }
+      );
     }
-
-    if (category) {
-      query = query.eq('category', category);
-    }
-
-    if (limit && !isNaN(parseInt(limit))) {
-      query = query.limit(parseInt(limit));
-    }
-
-    const { data, error } = await query;
-
-    if (error) {
-      throw error;
-    }
-
-    return NextResponse.json({ success: true, products: data, total: data.length });
 
   } catch (error) {
     console.error('Products API error:', error);
+    const errorMessage = error instanceof Error ? error.message : 'An unknown error occurred';
     return NextResponse.json(
-      { success: false, error: 'Failed to fetch products' },
+      { success: false, error: 'Failed to fetch products', details: errorMessage },
       { status: 500 }
     );
   }
@@ -48,11 +117,7 @@ export async function GET(request: NextRequest) {
 
 export async function POST(request: NextRequest) {
   try {
-    // For admin - create new product
     const body = await request.json();
-    
-    // NOTE: This public API endpoint should not be used for creating products
-    // Products should only be created through the admin API with authentication
     
     return NextResponse.json({
       success: false,
@@ -61,8 +126,9 @@ export async function POST(request: NextRequest) {
     
   } catch (error) {
     console.error('Create product error:', error);
+    const errorMessage = error instanceof Error ? error.message : 'An unknown error occurred';
     return NextResponse.json(
-      { success: false, error: 'Failed to create product' },
+      { success: false, error: 'Failed to create product', details: errorMessage },
       { status: 500 }
     );
   }
