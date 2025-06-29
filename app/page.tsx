@@ -55,7 +55,7 @@ export default function Home() {
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
             transition={{ duration: 1.2 }}
-            className="text-8xl md:text-[10rem] font-light tracking-wider text-gray-900 leading-none cursor-default"
+            className="text-6xl sm:text-7xl md:text-8xl lg:text-9xl xl:text-[10rem] font-light tracking-wider text-gray-900 leading-none cursor-default"
             style={{ fontFamily: "var(--font-cormorant)", letterSpacing: "0.1em", fontWeight: "300", lineHeight: "1.1" }}
           >
             ZEVANY
@@ -90,7 +90,9 @@ export default function Home() {
                 ))}
                 
                 {/* Spring-Summer Banner */}
-                <SpringSummerBanner imagePath="/images/banners/pixelperfect.png" />
+                <div className="col-span-2 md:col-span-2 lg:col-span-2">
+                  <SpringSummerBanner imagePath="/images/banners/pixelperfect.png" />
+                </div>
                 
                 {/* Remaining products */}
                 {shuffledProducts.slice(4).map((product, index) => (

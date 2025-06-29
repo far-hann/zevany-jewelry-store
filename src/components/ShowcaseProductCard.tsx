@@ -85,7 +85,7 @@ export default function ShowcaseProductCard({
             <div className="relative w-full h-0 pb-[100%] bg-gray-100 overflow-hidden">
               {primaryImage ? (
                 <Image
-                  src={primaryImage}
+                  src={isHovered && secondaryImage ? secondaryImage : primaryImage}
                   alt={name}
                   fill
                   className="object-cover object-center group-hover:scale-105 transition-transform duration-300"

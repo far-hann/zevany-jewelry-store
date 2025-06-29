@@ -10,7 +10,7 @@ async function verifyAdmin(req: NextRequest): Promise<boolean> {
     if (!token) return false;
 
     try {
-        const secret = new TextEncoder().encode(process.env.SUPABASE_SERVICE_ROLE_KEY!);
+        const secret = new TextEncoder().encode(process.env.JWT_SECRET!);
         await jwtVerify(token, secret);
         return true;
     } catch (error) {

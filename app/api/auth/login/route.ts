@@ -43,7 +43,7 @@ export async function POST(request: NextRequest) {
       );
     }
       // Generate JWT token
-    const secret = new TextEncoder().encode(process.env.SUPABASE_SERVICE_ROLE_KEY!);
+    const secret = new TextEncoder().encode(process.env.JWT_SECRET!);
     const token = await new SignJWT({ userId: user.id, email: user.email, role: user.role })
       .setProtectedHeader({ alg: 'HS256' })
       .setIssuedAt()

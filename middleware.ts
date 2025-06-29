@@ -21,9 +21,11 @@ export async function middleware(request: NextRequest) {
     }
 
     try {
-      const secret = new TextEncoder().encode(process.env.SUPABASE_SERVICE_ROLE_KEY!);
+      const secret = new TextEncoder().encode(process.env.JWT_SECRET!);
       await jwtVerify(token, secret);
-    } catch (error) {
+      return NextResponse.next();
+    } catch (err) {
+      console.error('Middleware token verification error:', err);
       loginUrl.searchParams.set('from', pathname);
       loginUrl.searchParams.set('error', 'Session expired');
       return NextResponse.redirect(loginUrl);

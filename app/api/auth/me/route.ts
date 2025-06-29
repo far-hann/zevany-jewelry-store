@@ -20,10 +20,10 @@ export async function GET(request: NextRequest) {
     
     // Verify the token
     try {
-      const jwtSecret = process.env.JWT_SECRET;
+      const jwtSecret = process.env.SUPABASE_SERVICE_ROLE_KEY;
       
       if (!jwtSecret) {
-        console.error('JWT_SECRET environment variable not set');
+        console.error('SUPABASE_SERVICE_ROLE_KEY environment variable not set');
         return NextResponse.json(
           { success: false, data: { user: null }, error: 'Server configuration error' },
           { status: 500 }

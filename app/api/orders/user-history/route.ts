@@ -63,7 +63,7 @@ export async function GET() {
     /*
     if (authHeader && authHeader.startsWith('Bearer ')) {
       const token = authHeader.substring(7);
-      const decoded = jwt.verify(token, process.env.SUPABASE_SERVICE_ROLE_KEY!) as any;
+      const decoded = jwt.verify(token, process.env.JWT_SECRET!) as any;
       const userId = decoded.userId;
       
       const { data: orders, error } = await supabase

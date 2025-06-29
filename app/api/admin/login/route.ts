@@ -16,12 +16,12 @@ export async function POST(req: NextRequest) {
     
     const adminEmail = process.env.ADMIN_EMAIL;
     const adminPassword = process.env.ADMIN_PASSWORD;
-    const jwtSecret = process.env.SUPABASE_SERVICE_ROLE_KEY;
+    const jwtSecret = process.env.JWT_SECRET;
     
     console.log(`Environment variables check: 
       ADMIN_EMAIL exists: ${Boolean(adminEmail)}
       ADMIN_PASSWORD exists: ${Boolean(adminPassword)}
-      SUPABASE_SERVICE_ROLE_KEY exists: ${Boolean(jwtSecret)}`
+      JWT_SECRET exists: ${Boolean(jwtSecret)}`
     );
     
     if (!adminEmail || !adminPassword || !jwtSecret) {
