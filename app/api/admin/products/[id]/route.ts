@@ -17,9 +17,16 @@ async function verifyAdmin(request: NextRequest): Promise<boolean> {
     }
 }
 
+// Define proper context type
+type RequestContext = {
+  params: {
+    id: string;
+  };
+};
+
 export async function GET(
   request: NextRequest,
-  { params }: { params: { id: string } }
+  context: RequestContext
 ) {
   try {
     const isAdmin = await verifyAdmin(request);
@@ -27,7 +34,7 @@ export async function GET(
         return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
     }
 
-    const { id } = params;
+    const { id } = context.params;
     
     // Fetch product from database
     const product = await getProductById(id);
@@ -52,7 +59,7 @@ export async function GET(
 
 export async function PUT(
   request: NextRequest,
-  { params }: { params: { id: string } }
+  context: RequestContext
 ) {
   try {
     const isAdmin = await verifyAdmin(request);
@@ -60,7 +67,7 @@ export async function PUT(
         return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
     }
 
-    const { id } = params;
+    const { id } = context.params;
     
     // Parse the request body
     const data = await request.json();
@@ -108,7 +115,7 @@ export async function PUT(
 
 export async function DELETE(
   request: NextRequest,
-  { params }: { params: { id: string } }
+  context: RequestContext
 ) {
   try {
     const isAdmin = await verifyAdmin(request);
@@ -116,7 +123,7 @@ export async function DELETE(
         return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
     }
 
-    const { id } = params;
+    const { id } = context.params;
     
     // Delete product from database
     const success = await deleteProduct(id);
