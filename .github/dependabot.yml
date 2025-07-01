@@ -1,0 +1,35 @@
+version: 2
+updates:
+  # Enable version updates for npm
+  - package-ecosystem: "npm"
+    # Look for `package.json` and `lock` files in the `root` directory
+    directory: "/"
+    # Check for updates once a week (on Monday)
+    schedule:
+      interval: "weekly"
+      day: "monday"
+    # Group all updates together
+    groups:
+      dependencies:
+        patterns:
+          - "*"
+    # Specify labels for pull requests
+    labels:
+      - "dependencies"
+      - "automerge"
+    # Limit the number of open pull requests for npm dependencies
+    open-pull-requests-limit: 10
+    # Set a prefix for commit messages
+    commit-message:
+      prefix: "deps"
+      prefix-development: "dev-deps"
+      include: "scope"
+    # Specify reviewers for pull requests
+    reviewers:
+      - "zevanyjewels@gmail.com"
+    # Define versioning strategy
+    versioning-strategy: auto
+    # Allow only minor and patch updates
+    ignore:
+      - dependency-name: "*"
+        update-types: ["version-update:semver-major"]

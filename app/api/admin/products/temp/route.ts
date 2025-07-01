@@ -1,6 +1,9 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { headers } from 'next/headers';
+// Import directly using relative path
 import { isAuthenticated, isAdmin } from '../../../../../src/utils/authUtils';
+// If that doesn't work in build, try this alternative:
+// import { isAuthenticated, isAdmin } from '@/src/utils/fixedImports';
 
 interface Params {
   id: string;

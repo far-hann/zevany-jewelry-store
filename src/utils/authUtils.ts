@@ -2,12 +2,7 @@ import { ReadonlyHeaders } from 'next/dist/server/web/spec-extension/adapters/he
 import { cookies } from 'next/headers';
 import { verifyToken } from '../services/authService';
 import { getUserById } from '../services/userService';
-
-interface AuthUser {
-  userId: string;
-  email: string;
-  role: 'admin' | 'user';
-}
+import { AuthUser } from '../../types/AuthUser';  // Fixed import path
 
 /**
  * Check if the user is authenticated based on request headers

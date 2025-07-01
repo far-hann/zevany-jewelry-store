@@ -1,22 +1,6 @@
 "use client";
 
-import { Product } from '@/types/Product';
+// Using relative path to ensure build compatibility
+import CategoryProductGrid from '../../src/components/CategoryProductGrid';
 
-interface NecklacesCategoryProps {
-  products: Product[];
-}
-
-export default function NecklacesCategory({ products }: NecklacesCategoryProps) {
-  return (
-    <div>
-      {/* Render your products here */}
-      {products.map(product => (
-        <div key={product.id}>
-          <h2>{product.name}</h2>
-          <p>{product.description}</p>
-          <span>{product.price}</span>
-        </div>
-      ))}
-    </div>
-  );
-}
+export default CategoryProductGrid;
