@@ -1,7 +1,5 @@
 /** @type {import('next').NextConfig} */
 const nextConfig = {
-  // Configure allowed development origins for cross-origin requests
-  // allowedDevOrigins: ['192.168.29.57', 'localhost', '127.0.0.1'], // This property is not standard in all Next.js versions.
   
   // Enable image optimization for better performance
   images: {
@@ -101,25 +99,16 @@ const nextConfig = {
     return config;
   },
   
-  // Optimize experimental options to prevent chunk loading issues
   experimental: {
     optimizeCss: true,
     scrollRestoration: true,
-    // webpackBuildWorker and optimizePackageImports may not be supported in all Next.js versions.
-    // webpackBuildWorker: true, 
-    // optimizePackageImports: ['react', 'react-dom', 'framer-motion', '@headlessui/react', '@heroicons/react'],
   },
   
-  // serverExternalPackages is not a standard Next.js property.
-  // serverExternalPackages: [], 
   
-  // Development settings to prevent cache issues
   generateEtags: false,
   
-  // Ensure static assets work properly
   assetPrefix: process.env.NODE_ENV === 'production' ? undefined : '',
   
-  // Enable React Strict Mode for better development experience
   reactStrictMode: true,
 };
 

@@ -1,5 +1,7 @@
 import { ReadonlyHeaders } from 'next/dist/server/web/spec-extension/adapters/headers';
 import { cookies } from 'next/headers';
+import { verifyToken } from '@/services/authService';
+import { getUserById } from '@/services/userService';
 
 interface AuthUser {
   userId: string;
@@ -14,41 +16,40 @@ interface AuthUser {
 export async function isAuthenticated(headers: Headers | ReadonlyHeaders | Promise<ReadonlyHeaders>): Promise<AuthUser | null> {
   // Wait for the headers if it's a promise
   const resolvedHeaders = headers instanceof Promise ? await headers : headers;
-  
-  // In a real implementation, you would validate JWT tokens or session cookies
-  // For now, this is a placeholder that always returns an admin user for testing
-  
-  // Simulating an authenticated admin user
-  return {
-    userId: '1',
-    email: 'admin@zevany.com',
-    role: 'admin'
-  };
+  const token = resolvedHeaders.get('Authorization')?.replace('Bearer ', '');
+
+  if (!token) return null;
+
+  try {
+    const user = await verifyToken(token);
+    return user;
+  } catch (error) {
+    console.error('Authentication error:', error);
+    return null;
+  }
 }
 
 /**
  * Check if the user is an admin
  */
 export async function isAdmin(userId: string): Promise<boolean> {
-  // In a real implementation, you would query your database
-  // For now, this is a placeholder that always returns true for testing
-  
-  return true;
+  const user = await getUserById(userId);
+  return user?.role === 'admin';
 }
 
 /**
  * Get the current user from cookies or session
  */
 export function getCurrentUser(): AuthUser | null {
-  // In a real implementation, you would decode JWT tokens from cookies
-  // or fetch user data from your session storage
-  
-  // For now, return a mock admin user
-  return {
-    userId: '1',
-    email: 'admin@zevany.com',
-    role: 'admin'
-  };
+  const tokenCookie = cookies().get('authToken');
+  if (!tokenCookie || !tokenCookie.value) return null;
+
+  try {
+    return verifyToken(tokenCookie.value);
+  } catch (error) {
+    console.error('Error getting current user:', error);
+    return null;
+  }
 }
 
 /**

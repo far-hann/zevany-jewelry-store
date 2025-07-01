@@ -3,7 +3,7 @@
 /* Product grid - thin grid lines as requested */
 .swarovski-product-grid {
   display: grid;
-  grid-template-columns: repeat(4, 1fr);
+  grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
   gap: 16px 8px; /* Thin grid lines as requested */
   width: 100%;
 }
@@ -144,3 +144,11 @@
   transition-duration: 0s !important;
   transform: none !important;
 }
+
+/* Consolidated product card styles */
+
+.product-card {
+  /* Add unified styles here */
+}
+
+/* Removed redundant styles from other files */

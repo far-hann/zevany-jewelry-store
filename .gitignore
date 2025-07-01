@@ -40,3 +40,17 @@ yarn-error.log*
 *.tsbuildinfo
 next-env.d.ts
 .env
+
+# IDE specific files
+.idea/
+.vscode/
+*.swp
+*.swo
+
+# Backup and temporary files
+*_backup.tsx
+*_clean.tsx
+*_new.tsx
+*_fixed.tsx
+admin-access-fix.js
+run-seed.js

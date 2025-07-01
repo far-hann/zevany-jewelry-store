@@ -3,6 +3,12 @@ import { writeFile, mkdir } from 'fs/promises';
 import path from 'path';
 import { v4 as uuidv4 } from 'uuid';
 
+interface UploadedFile {
+  name: string;
+  type: string;
+  arrayBuffer: () => Promise<ArrayBuffer>;
+}
+
 export async function POST(req: NextRequest) {
   try {
     // Check if request is multipart/form-data
@@ -28,33 +34,44 @@ export async function POST(req: NextRequest) {
       console.error('Error creating upload directory:', err);
     }
     
+    let fileFound = false;
+    let validFileFound = false;
     // Process each file in the form data
     for (const [key, value] of formData.entries()) {
       if (value instanceof File) {
-        const file = value;
-        
+        fileFound = true;
+        const file = value as UploadedFile;
         // Validate file type
         const validTypes = ['image/jpeg', 'image/png', 'image/gif', 'image/webp'];
         if (!validTypes.includes(file.type)) {
-          continue; // Skip invalid file types
+          console.error(`Invalid file type: ${file.type}`);
+          continue; // Skip invalid file types, don't return immediately
         }
-        
+        validFileFound = true;
         // Generate a unique filename
         const filename = `${uuidv4()}_${file.name.replace(/\s+/g, '-')}`;
         const filePath = path.join(uploadDir, filename);
-        
         // Get the file content as ArrayBuffer
-        const buffer = Buffer.from(await file.arrayBuffer());
-        
+        const buffer = new Uint8Array(await file.arrayBuffer());
         // Write file to disk
         await writeFile(filePath, buffer);
-        
         // Add the URL to the array (relative to public directory)
         const imageUrl = `/uploads/${filename}`;
         imageUrls.push(imageUrl);
       }
     }
-    
+    if (!fileFound) {
+      return NextResponse.json(
+        { error: 'No files uploaded' },
+        { status: 400 }
+      );
+    }
+    if (!validFileFound) {
+      return NextResponse.json(
+        { error: 'No valid image files uploaded. Supported types: jpeg, png, gif, webp.' },
+        { status: 400 }
+      );
+    }
     // Return the URLs of the uploaded files
     return NextResponse.json({ 
       success: true,

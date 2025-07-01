@@ -6,6 +6,7 @@ import { products } from '@/data/products'
 import { getWishlist, removeFromWishlist } from '@/utils/cartWishlist'
 import Link from 'next/link'
 import Image from 'next/image'
+import withAuth from '../../src/utils/withAuth'
 import AuthPromptModal from '@/src/components/AuthPromptModal'
 import AuthModal from '@/src/components/AuthModal'
 import { useAuthPrompt } from '@/src/hooks/useAuthPrompt'
@@ -105,7 +106,8 @@ function Wishlist() {
                   >
                     <X className="h-4 w-4" />
                   </button>
-                </div>                <div className="p-6">
+                </div>
+                <div className="p-6">
                   <Link href={`/product/${product.id}`}>
                     <h3 className="text-lg font-medium text-gray-900 hover:text-gray-700 font-serif mb-2">{product.name}</h3>
                   </Link>
@@ -118,9 +120,12 @@ function Wishlist() {
                     <Eye className="h-4 w-4" />
                     <span>View Details</span>
                   </Link>
-                </div></div>
+                </div>
+              </div>
             ))}
-          </div>        )}      </div>      {/* Authentication Prompt Modal */}
+          </div>
+        )}
+      </div>      {/* Authentication Prompt Modal */}
       <AuthPromptModal
         isOpen={isPromptOpen}
         onClose={closePrompt}
@@ -139,4 +144,4 @@ function Wishlist() {
   )
 }
 
-export default Wishlist;
+export default withAuth(Wishlist);
