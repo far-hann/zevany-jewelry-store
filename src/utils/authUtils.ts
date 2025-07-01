@@ -1,7 +1,7 @@
 import { ReadonlyHeaders } from 'next/dist/server/web/spec-extension/adapters/headers';
 import { cookies } from 'next/headers';
-import { verifyToken } from '@/services/authService';
-import { getUserById } from '@/services/userService';
+import { verifyToken } from '../services/authService';
+import { getUserById } from '../services/userService';
 
 interface AuthUser {
   userId: string;
